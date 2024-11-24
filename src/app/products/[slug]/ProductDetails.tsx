@@ -34,7 +34,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       ?.map((option) => ({
         [option.name || ""]: option.choices?.[0].description || "",
       }))
-      ?.reduce((acc, curr) => ({ ...acc, ...curr }), {}) || {},
+      ?.reduce((acc, curr) => ({ ...acc, ...curr }), {}) || {}
   );
 
   const selectedVariant = findVariant(product, selectedOptions);
@@ -49,7 +49,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
   const selectedOptionsMedia = product.productOptions?.flatMap((option) => {
     const selectedChoice = option.choices?.find(
-      (choice) => choice.description === selectedOptions[option.name || ""],
+      (choice) => choice.description === selectedOptions[option.name || ""]
     );
     return selectedChoice?.media?.items ?? [];
   });

@@ -33,7 +33,7 @@ export default function WixImage({
           mediaIdentifier,
           props.width,
           props.height,
-          {},
+          {}
         )
       : wixMedia.getImageUrl(mediaIdentifier).url
     : placeholder;

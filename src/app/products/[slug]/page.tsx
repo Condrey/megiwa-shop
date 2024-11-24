@@ -15,13 +15,16 @@ import ProductReviews, {
 } from "./ProductReviews";
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({
-  params: { slug },
+  params,
 }: PageProps): Promise<Metadata> {
-  const product = await getProductBySlug(getWixServerClient(), slug);
+  const { slug } = await params;
+  const client = await getWixServerClient();
+
+  const product = await getProductBySlug(client, slug);
 
   if (!product) notFound();
 
@@ -29,7 +32,7 @@ export async function generateMetadata({
 
   return {
     title: product.name,
-    description: "Get this product on Flow Shop",
+    description: "Get this product on Megiwa Shop",
     openGraph: {
       images: mainImage?.url
         ? [
@@ -45,8 +48,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({ params: { slug } }: PageProps) {
-  const product = await getProductBySlug(getWixServerClient(), slug);
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params;
+  const client = await getWixServerClient();
+  const product = await getProductBySlug(client, slug);
 
   if (!product?._id) notFound();
 
@@ -61,7 +66,7 @@ export default async function Page({ params: { slug } }: PageProps) {
       <div className="space-y-5">
         <h2 className="text-2xl font-bold">Buyer reviews</h2>
         <Suspense fallback={<ProductReviewsLoadingSkeleton />}>
-          <ProductReviewsSection product={product} />
+          {/* <ProductReviewsSection product={product} /> */}
         </Suspense>
       </div>
     </main>
@@ -73,10 +78,8 @@ interface RelatedProductsProps {
 }
 
 async function RelatedProducts({ productId }: RelatedProductsProps) {
-  const relatedProducts = await getRelatedProducts(
-    getWixServerClient(),
-    productId,
-  );
+  const client = await getWixServerClient();
+  const relatedProducts = await getRelatedProducts(client, productId);
 
   if (!relatedProducts.length) return null;
 
@@ -109,7 +112,7 @@ interface ProductReviewsSectionProps {
 async function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
   if (!product._id) return null;
 
-  const wixClient = getWixServerClient();
+  const wixClient = await getWixServerClient();
 
   const loggedInMember = await getLoggedInMember(wixClient);
 

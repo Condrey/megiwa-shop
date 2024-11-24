@@ -11,8 +11,8 @@ const lora = Lora({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Flow Shop",
-    absolute: "Flow Shop",
+    template: "%s | Megiwa Shop",
+    absolute: "Megiwa Shop",
   },
   description: "A full-stack e-commerce application built with Next.js 15",
 };
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={lora.className}>
         <ThemeProvider
           attribute="class"

@@ -43,7 +43,7 @@ export default function ProductReviews({ product }: ProductReviewsProps) {
           items: page.items.filter(
             (item) =>
               item.moderation?.moderationStatus ===
-              reviews.ModerationModerationStatus.APPROVED,
+              reviews.ModerationModerationStatus.APPROVED
           ),
         })),
       }),
@@ -95,7 +95,7 @@ function Review({
               key={i}
               className={cn(
                 "size-5 text-primary",
-                i < (content?.rating || 0) && "fill-primary",
+                i < (content?.rating || 0) && "fill-primary"
               )}
             />
           ))}
@@ -127,7 +127,7 @@ function Review({
               height={24}
               className="size-5"
             />
-            <span className="font-bold">Flow Shop Team</span>
+            <span className="font-bold">Megiwa Shop Team</span>
           </div>
           <div className="whitespace-pre-line">{reply.message}</div>
         </div>

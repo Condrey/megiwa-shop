@@ -13,7 +13,7 @@ import MobileMenu from "./MobileMenu";
 import ShoppingCartButton from "./ShoppingCartButton";
 
 export default async function Navbar() {
-  const wixClient = getWixServerClient();
+  const wixClient = await getWixServerClient();
 
   const [cart, loggedInMember, collections] = await Promise.all([
     getCart(wixClient),
@@ -32,8 +32,8 @@ export default async function Navbar() {
         </Suspense>
         <div className="flex flex-wrap items-center gap-5">
           <Link href="/" className="flex items-center gap-4">
-            <Image src={logo} alt="Flow Shop logo" width={40} height={40} />
-            <span className="text-xl font-bold">Flow Shop</span>
+            <Image src={logo} alt="Megiwa Shop logo" width={40} height={40} />
+            <span className="text-xl font-bold">Megiwa Shop</span>
           </Link>
           <MainNavigation
             collections={collections}

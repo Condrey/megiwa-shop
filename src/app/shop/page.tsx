@@ -8,32 +8,34 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
     page?: string;
     collection?: string[];
     price_min?: string;
     price_max?: string;
     sort?: string;
-  };
+  }>;
 }
 
-export function generateMetadata({ searchParams: { q } }: PageProps): Metadata {
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const { q } = await searchParams;
   return {
     title: q ? `Results for "${q}"` : "Products",
   };
 }
 
-export default async function Page({
-  searchParams: {
+export default async function Page({ searchParams }: PageProps) {
+  const {
     q,
     page = "1",
     collection: collectionIds,
     price_min,
     price_max,
     sort,
-  },
-}: PageProps) {
+  } = await searchParams;
   const title = q ? `Results for "${q}"` : "Products";
 
   return (
@@ -72,7 +74,8 @@ async function ProductResults({
 }: ProductResultsProps) {
   const pageSize = 8;
 
-  const products = await queryProducts(getWixServerClient(), {
+  const client = await getWixServerClient();
+  const products = await queryProducts(client, {
     q,
     limit: pageSize,
     skip: (page - 1) * pageSize,

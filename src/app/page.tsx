@@ -31,7 +31,7 @@ export default function Home() {
         <div className="relative hidden h-full w-1/2 md:block">
           <Image
             src={banner}
-            alt="Flow Shop banner"
+            alt="Megiwa Shop banner"
             className="h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-secondary via-transparent to-transparent" />
@@ -45,7 +45,7 @@ export default function Home() {
 }
 
 async function FeaturedProducts() {
-  const wixClient = getWixServerClient();
+  const wixClient = await getWixServerClient();
 
   const collection = await getCollectionBySlug(wixClient, "featured-products");
 

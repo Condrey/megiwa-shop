@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
   if (sessionTokens.accessToken.expiresAt < Math.floor(Date.now() / 1000)) {
     try {
       sessionTokens = await wixClient.auth.renewToken(
-        sessionTokens.refreshToken,
+        sessionTokens.refreshToken
       );
     } catch (error) {
       sessionTokens = await wixClient.auth.generateVisitorTokens();

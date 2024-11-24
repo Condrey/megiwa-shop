@@ -8,15 +8,17 @@ import { notFound } from "next/navigation";
 import ClearCart from "./ClearCart";
 
 interface PageProps {
-  searchParams: { orderId: string };
+  searchParams: Promise<{ orderId: string }>;
 }
 
 export const metadata: Metadata = {
   title: "Checkout success",
 };
 
-export default async function Page({ searchParams: { orderId } }: PageProps) {
-  const wixClient = getWixServerClient();
+export default async function Page({ searchParams }: PageProps) {
+  const { orderId } = await searchParams;
+
+  const wixClient = await getWixServerClient();
 
   const [order, loggedInMember] = await Promise.all([
     getOrder(wixClient, orderId),

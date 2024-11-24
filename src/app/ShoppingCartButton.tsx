@@ -33,7 +33,7 @@ export default function ShoppingCartButton({
   const totalQuantity =
     cartQuery.data?.lineItems?.reduce(
       (acc, item) => acc + (item.quantity || 0),
-      0,
+      0
     ) || 0;
 
   return (
@@ -162,7 +162,7 @@ function ShoppingCartItem({
             {item.descriptionLines
               .map(
                 (line) =>
-                  line.colorInfo?.translated || line.plainText?.translated,
+                  line.colorInfo?.translated || line.plainText?.translated
               )
               .join(", ")}
           </p>

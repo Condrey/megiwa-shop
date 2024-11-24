@@ -60,9 +60,9 @@ export default function MobileMenu({
           <SheetHeader>
             <SheetTitle>Navigation</SheetTitle>
           </SheetHeader>
-          <div className="flex flex-col items-center space-y-10 py-10">
-            <SearchField className="w-full" />
-            <ul className="space-y-5 text-center text-lg">
+          <div className="flex flex-col   justify-start space-y-10 py-10">
+            <SearchField className="w-full " />
+            <ul className="space-y-5 text-start text-lg">
               <li>
                 <Link href="/shop" className="font-semibold hover:underline">
                   Shop

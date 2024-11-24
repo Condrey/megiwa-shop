@@ -8,7 +8,7 @@ export const getCollectionBySlug = cache(
       await wixClient.collections.getCollectionBySlug(slug);
 
     return collection || null;
-  },
+  }
 );
 
 export const getCollections = cache(
@@ -16,9 +16,9 @@ export const getCollections = cache(
     const collections = await wixClient.collections
       .queryCollections()
       .ne("_id", "00000000-000000-000000-000000000001") // all products
-      .ne("_id", "32510e2b-cc3b-8d4e-ebe5-2797c8b9ad49") // featured products
+      .ne("_id", "24e5c428-ad0e-d862-f5db-1dcb6767e125") // featured products
       .find();
 
     return collections.items;
-  },
+  }
 );

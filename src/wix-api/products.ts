@@ -24,7 +24,7 @@ export async function queryProducts(
     priceMax,
     skip,
     limit,
-  }: QueryProductsFilter,
+  }: QueryProductsFilter
 ) {
   let query = wixClient.products.queryProducts();
 
@@ -83,7 +83,7 @@ export const getProductBySlug = cache(
     }
 
     return product;
-  },
+  }
 );
 
 export async function getProductById(wixClient: WixClient, productId: string) {
@@ -93,7 +93,7 @@ export async function getProductById(wixClient: WixClient, productId: string) {
 
 export async function getRelatedProducts(
   wixClient: WixClient,
-  productId: string,
+  productId: string
 ) {
   const result = await wixClient.recommendations.getRecommendation(
     [
@@ -102,7 +102,7 @@ export async function getRelatedProducts(
         appId: WIX_STORES_APP_ID,
       },
       {
-        _id: "d5aac1e1-2e53-4d11-85f7-7172710b4783", // "Frequenly bought together"
+        _id: "d5aac1e1-2e53-4d11-85f7-7172710b4783", // "Frequently bought together"
         appId: WIX_STORES_APP_ID,
       },
     ],
@@ -114,7 +114,7 @@ export async function getRelatedProducts(
         },
       ],
       minimumRecommendedItems: 3,
-    },
+    }
   );
 
   const productIds = result.recommendation?.items
