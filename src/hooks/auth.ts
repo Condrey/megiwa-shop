@@ -26,7 +26,8 @@ export default function useAuth() {
       console.error(error);
       toast({
         variant: "destructive",
-        description: "Failed to log in. Please try again.",
+        description:
+          "Failed to log in. Please try again.",
       });
     }
   }

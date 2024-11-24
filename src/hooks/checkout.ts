@@ -23,7 +23,8 @@ export function useCartCheckout() {
       console.error(error);
       toast({
         variant: "destructive",
-        description: "Failed to load checkout. Please try again.",
+        description:
+          "Failed to load checkout. Meos, give me subscription money for checkout. Please try again.",
       });
     }
   }
@@ -50,7 +51,8 @@ export function useQuickBuy() {
       console.error(error);
       toast({
         variant: "destructive",
-        description: "Failed to load checkout. Please try again.",
+        description:
+          "Failed to load checkout. Meos, give me subscription money for checkout. Please try again.",
       });
     }
   }

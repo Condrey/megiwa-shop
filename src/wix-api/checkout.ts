@@ -57,7 +57,7 @@ export async function getCheckoutUrlForProduct(
   });
 
   if (!_id) {
-    throw new Error("Failed to create checkout");
+    throw new Error("Failed to create checkout. Meos, give me subscription money for checkout");
   }
 
   const { redirectSession } = await wixClient.redirects.createRedirectSession({
