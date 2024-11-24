@@ -23,9 +23,13 @@ export const getWixAdminClient = cache(() => {
       files,
     },
     auth: ApiKeyStrategy({
-      apiKey: env.WIX_API_KEY,
-      siteId: env.NEXT_PUBLIC_WIX_SITE_ID,
+      apiKey: "kjbkjbvkjvskjvkjkjvakjvksajvkjv",
+      siteId: "djbjkbdksjbkdjbkjsbkjbdksjbkdjksjbkd",
     }),
+    //TODO: auth: ApiKeyStrategy({
+    //   apiKey: env.WIX_API_KEY,
+    //   siteId: env.NEXT_PUBLIC_WIX_SITE_ID,
+    // }),
   });
 
   return wixClient;

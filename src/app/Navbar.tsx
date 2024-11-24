@@ -32,8 +32,8 @@ export default async function Navbar() {
         </Suspense>
         <div className="flex flex-wrap items-center gap-5">
           <Link href="/" className="flex items-center gap-4">
-            <Image src={logo} alt="Megiwa Shop logo" width={40} height={40} />
-            <span className="text-xl font-bold">Megiwa Shop</span>
+            <Image src={logo} alt="Megiwa Shoppers logo" width={40} height={40} />
+            <span className="text-xl font-bold">Megiwa Shoppers</span>
           </Link>
           <MainNavigation
             collections={collections}
