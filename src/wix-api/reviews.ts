@@ -59,7 +59,7 @@ export async function getProductReviews(
   let query = wixClient.reviews.queryReviews().eq("entityId", productId);
 
   if (contactId) {
-    // @ts-expect-error
+    
     query = query.eq("author.contactId", contactId);
   }
 
