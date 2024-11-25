@@ -66,7 +66,7 @@ export default async function Page({ params }: PageProps) {
       <div className="space-y-5">
         <h2 className="text-2xl font-bold">Buyer reviews</h2>
         <Suspense fallback={<ProductReviewsLoadingSkeleton />}>
-          {/* <ProductReviewsSection product={product} /> */}
+          <ProductReviewsSection product={product} />
         </Suspense>
       </div>
     </main>

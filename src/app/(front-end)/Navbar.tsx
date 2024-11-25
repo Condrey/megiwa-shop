@@ -8,9 +8,9 @@ import { getLoggedInMember } from "@/wix-api/members";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import ShoppingCartButton from "../ShoppingCartButton";
 import MainNavigation from "./MainNavigation";
 import MobileMenu from "./MobileMenu";
-import ShoppingCartButton from "./ShoppingCartButton";
 
 export default async function Navbar() {
   const wixClient = await getWixServerClient();
@@ -32,7 +32,12 @@ export default async function Navbar() {
         </Suspense>
         <div className="flex flex-wrap items-center gap-5">
           <Link href="/" className="flex items-center gap-4">
-            <Image src={logo} alt="Megiwa Shoppers logo" width={40} height={40} />
+            <Image
+              src={logo}
+              alt="Megiwa Shoppers logo"
+              width={40}
+              height={40}
+            />
             <span className="text-xl font-bold">Megiwa Shoppers</span>
           </Link>
           <MainNavigation
