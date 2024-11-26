@@ -46,7 +46,7 @@ export default function MainNavigation({
                     <NavigationMenuLink
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "w-full justify-start whitespace-nowrap",
+                        "w-full justify-start whitespace-nowrap"
                       )}
                     >
                       {collection.name}

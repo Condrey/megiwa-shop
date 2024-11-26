@@ -46,7 +46,7 @@ function getFormattedPrice(product: products.Product) {
   const maxPrice = product.priceRange?.maxValue;
 
   if (minPrice && maxPrice && minPrice !== maxPrice) {
-    return `from ${formatCurrency(minPrice, product.priceData?.currency)}`;
+    return `from ${formatCurrency(minPrice, product.priceData?.currency!)}`;
   } else {
     return (
       product.priceData?.formatted?.discountedPrice ||

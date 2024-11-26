@@ -4,3 +4,4 @@ export const WIX_STORES_APP_ID_BACK_IN_STOCK_NOTIFICATIONS =
 export const WIX_SESSION_COOKIE = "wix_session";
 export const WIX_OAUTH_DATA_COOKIE = "wix_oauthdata";
 export const SUPPORT_EMAIL = "support@megiwashoppers.com";
+export const MAX_ATTACHMENTS = 4;

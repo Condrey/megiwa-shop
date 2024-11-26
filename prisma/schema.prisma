@@ -1,0 +1,395 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id                     String                  @unique @default(uuid())
+  createdAt              DateTime                @default(now())
+  additionalInfoSections AdditionalInfoSection[]
+  brand                  String?
+  collectionIds          String[]
+  convertedPriceData     PriceData?              @relation("convertedPriceDataPriceDataRelation", fields: [convertedPriceDataId], references: [id])
+  costAndProfitData      CostAndProfitData?      @relation(fields: [costAndProfitDataId], references: [id])
+  costRange              NumericPropertyRange?   @relation("costRangeNumericPropertyRangeRelation", fields: [costRangeId], references: [id])
+  customTextFields       CustomTextField[]
+  description            String?
+  discount               Discount?               @relation(fields: [discountId], references: [id])
+  inventoryItemId        String?
+  lastUpdatedAt          DateTime                @updatedAt
+  manageVariants         Boolean                 @default(false)
+  media                  Media?                  @relation(fields: [mediaId], references: [id])
+  name                   String?
+  numericId              String?
+  priceData              PriceData?              @relation("priceDataPriceDataRelation", fields: [priceDataId], references: [id])
+  pricePerUnitData       PricePerUnitData?       @relation(fields: [pricePerUnitDataId], references: [id])
+  priceRange             NumericPropertyRange?   @relation("priceRangeNumericPropertyRangeRelation", fields: [priceRangeId], references: [id])
+  productOptions         ProductOption[]
+  productPageUrl         PageUrl?                @relation(fields: [pageUrlId], references: [id])
+  productType            ProductType?
+  ribbon                 String?
+  seoData                SeoSchema?              @relation(fields: [seoSchemaId], references: [id])
+  sku                    String?
+  slug                   String?
+  Stock                  Stock?                  @relation(fields: [stockId], references: [id])
+  variants               Variant[]
+  visible                Boolean                 @default(false)
+  weight                 Int?
+  weightRange            NumericPropertyRange?   @relation("weightRangeProductRelation", fields: [weightRangeId], references: [id])
+  costAndProfitDataId    String?
+  priceRangeId           String?
+  costRangeId            String?
+  weightRangeId          String?
+  discountId             String?
+  mediaId                String?
+  priceDataId            String?
+  convertedPriceDataId   String?
+  pricePerUnitDataId     String?
+  pageUrlId              String?
+  seoSchemaId            String?
+  stockId                String?
+
+  @@map("products")
+}
+
+model AdditionalInfoSection {
+  id          String   @unique @default(uuid())
+  title       String?
+  description String?
+  Product     Product? @relation(fields: [productId], references: [id])
+  productId   String?
+
+  @@map("addition_information_sections")
+}
+
+model CostAndProfitData {
+  id                String    @unique @default(uuid())
+  formattedItemCost String?
+  formattedProfit   String?
+  itemCost          Int?
+  profit            Int?
+  profitMargin      Int?
+  products          Product[]
+  variants          Variant[]
+
+  @@map("cost_and_profit_data")
+}
+
+model NumericPropertyRange {
+  id                          String    @unique @default(uuid())
+  maxValue                    Int?
+  minValue                    Int?
+  costRangeRelationProducts   Product[] @relation("costRangeNumericPropertyRangeRelation")
+  priceRangeRelationProducts  Product[] @relation("priceRangeNumericPropertyRangeRelation")
+  weightRangeRelationProducts Product[] @relation("weightRangeProductRelation")
+
+  @@map("numeric_property_ranges")
+}
+
+model CustomTextField {
+  id        String   @unique @default(uuid())
+  mandatory Boolean?
+  maxLength Int?
+  title     String?
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+
+  @@map("custom_text_fields")
+}
+
+model Discount {
+  id       String           @unique @default(uuid())
+  type     DiscountEnumType
+  value    Int?
+  products Product[]
+
+  @@map("discounts")
+}
+
+enum DiscountEnumType {
+  PERCENT
+  AMOUNT
+}
+
+model Media {
+  id                    String               @unique @default(uuid())
+  items                 MediaItem[]
+  mainMedia             MainMedia            @relation(fields: [mainMediaId], references: [id])
+  video                 MediaItemVideo?      @relation(fields: [mediaItemVideoId], references: [id])
+  title                 String?
+  thumbnail             MediaItemUrlAndSize? @relation("thumbnailMediaItemUrlAndSizeRelation", fields: [thumbnailId], references: [id])
+  mediaType             MediaItemEnumType?
+  image                 MediaItemUrlAndSize? @relation("imageMediaItemUrlAndSizeRelation", fields: [imageId], references: [id])
+  mainMediaId           String
+  mediaItemVideoId      String?
+  thumbnailId           String?
+  imageId               String?
+  products              Product[]
+  choices               Choice[]
+  MediaItemUrlAndSize   MediaItemUrlAndSize? @relation(fields: [mediaItemUrlAndSizeId], references: [id])
+  mediaItemUrlAndSizeId String?
+
+  @@map("medias")
+}
+
+model MediaItem {
+  id               String               @unique @default(uuid())
+  image            MediaItemUrlAndSize? @relation("imageMediaItemUrlAndSizeRelation", fields: [imageId], references: [id])
+  mediaType        MediaItemEnumType?
+  thumbnail        MediaItemUrlAndSize? @relation("thumbnailMediaItemUrlAndSizeRelation", fields: [thumbnailId], references: [id])
+  title            String?
+  video            MediaItemVideo?      @relation(fields: [mediaItemVideoId], references: [id])
+  Media            Media?               @relation(fields: [mediaId], references: [id])
+  mediaId          String?
+  imageId          String?
+  thumbnailId      String?
+  mediaItemVideoId String?
+
+  @@map("media_items")
+}
+
+model MediaItemVideo {
+  id                String                @unique @default(uuid())
+  files             MediaItemUrlAndSize[]
+  stillFrameMediaId String?
+  mediaS            Media[]
+  mediaItems        MediaItem[]
+  mainMediaS        MainMedia[]
+
+  @@map("media_item_videos")
+}
+
+model MediaItemUrlAndSize {
+  id                  String          @unique @default(uuid())
+  altText             String?
+  format              String?
+  height              String?
+  url                 String
+  width               String?
+  thumbnailMedias     Media[]         @relation("thumbnailMediaItemUrlAndSizeRelation")
+  imageMedias         Media[]         @relation("imageMediaItemUrlAndSizeRelation")
+  thumbnailMediaItems MediaItem[]     @relation("thumbnailMediaItemUrlAndSizeRelation")
+  imageMediaItems     MediaItem[]     @relation("imageMediaItemUrlAndSizeRelation")
+  mediaItemVideo      MediaItemVideo? @relation(fields: [mediaItemVideoId], references: [id])
+  mediaItemVideoId    String?
+  thumbnailMainMedias MainMedia[]     @relation("thumbnailMediaItemUrlAndSizeRelation")
+  imageMainMedias     MainMedia[]     @relation("imageMediaItemUrlAndSizeRelation")
+  medias              Media[]
+
+  @@map("media_item_urls_and_sizes")
+}
+
+enum MediaItemEnumType {
+  IMAGE
+  VIDEO
+}
+
+model MainMedia {
+  id               String               @unique @default(uuid())
+  image            MediaItemUrlAndSize? @relation("imageMediaItemUrlAndSizeRelation", fields: [imageId], references: [id])
+  mediaType        MediaItemEnumType?
+  thumbnail        MediaItemUrlAndSize? @relation("thumbnailMediaItemUrlAndSizeRelation", fields: [thumbnailId], references: [id])
+  title            String?
+  video            MediaItemVideo?      @relation(fields: [mediaItemVideoId], references: [id])
+  medias           Media[]
+  imageId          String?
+  thumbnailId      String?
+  mediaItemVideoId String?
+
+  @@map("main_medias")
+}
+
+model PriceData {
+  id                         String          @unique @default(uuid())
+  currency                   String?
+  discountedPrice            Int?
+  formatted                  FormattedPrice? @relation(fields: [formattedPriceId], references: [id])
+  price                      Int?
+  pricePerUnit               Int?
+  formattedPriceId           String?
+  priceDataProducts          Product[]       @relation("priceDataPriceDataRelation")
+  convertedPriceDataProducts Product[]       @relation("convertedPriceDataPriceDataRelation")
+  priceDataVariants          Variant[]       @relation("priceDataPriceDataRelation")
+  convertedPriceDataVariants Variant[]       @relation("convertedPriceDataPriceDataRelation")
+
+  @@map("price_datas")
+}
+
+model FormattedPrice {
+  id              String      @unique @default(uuid())
+  discountedPrice String?
+  price           String?
+  pricePerUnit    String?
+  priceDatas      PriceData[]
+
+  @@map("formatted_prices")
+}
+
+model PricePerUnitData {
+  id                   String               @unique @default(uuid())
+  baseMeasurementUnit  MeasurementEnumUnit?
+  baseQuality          Int?
+  totalMeasurementUnit MeasurementEnumUnit?
+  totalQuantity        Int?
+  products             Product[]
+
+  @@map("price_per_unit_datas")
+}
+
+enum MeasurementEnumUnit {
+  UNSPECIFIED
+  ML
+  CL
+  L
+  CBM
+  MG
+  G
+  KG
+  MM
+  CM
+  M
+  SQM
+  OZ
+  LB
+  FLOZ
+  PT
+  QT
+  GAL
+  IN
+  FT
+  YD
+  SQFT
+}
+
+model ProductOption {
+  id         String      @unique @default(uuid())
+  choices    Choice[]
+  name       String?
+  optionType OptionType?
+  Product    Product?    @relation(fields: [productId], references: [id])
+  productId  String?
+
+  @@map("product_options")
+}
+
+model Choice {
+  id              String         @unique @default(uuid())
+  description     String?
+  inStock         Boolean        @default(false)
+  media           Media?         @relation(fields: [mediaId], references: [id])
+  value           String?
+  visible         Boolean        @default(false)
+  ProductOption   ProductOption? @relation(fields: [productOptionId], references: [id])
+  productOptionId String?
+  mediaId         String?
+
+  @@map("choices")
+}
+
+enum OptionType {
+  UNSPECIFIED_OPTION_TYPE
+  DROP_DOWN
+  COLOR
+}
+
+model PageUrl {
+  id       String    @unique @default(uuid())
+  base     String?
+  path     String?
+  products Product[]
+
+  @@map("page_urls")
+}
+
+enum ProductType {
+  UNSPECIFIED_PRODUCT_TYPE
+  PHYSICAL
+  DIGITAL
+}
+
+model SeoSchema {
+  id         String    @unique @default(uuid())
+  tags       Tag[]
+  settings   Settings  @relation(fields: [settingsId], references: [id])
+  products   Product[]
+  settingsId String
+
+  @@map("seo-schemas")
+}
+
+model Settings {
+  id                  String      @unique @default(uuid())
+  keywords            KeyWord[]
+  preventAutoRedirect Boolean     @default(true)
+  seoSchemas          SeoSchema[]
+
+  @@map("settings")
+}
+
+model KeyWord {
+  id         String    @unique @default(uuid())
+  isMain     Boolean   @default(false)
+  origin     String?
+  term       String?
+  Settings   Settings? @relation(fields: [settingsId], references: [id])
+  settingsId String?
+
+  @@map("keywords")
+}
+
+model Tag {
+  id          String     @unique @default(uuid())
+  children    String?
+  custom      Boolean    @default(false)
+  disabled    Boolean    @default(false)
+  meta        Json?
+  props       Json?
+  type        String?
+  SeoSchema   SeoSchema? @relation(fields: [seoSchemaId], references: [id])
+  seoSchemaId String?
+
+  @@map("tags")
+}
+
+model Stock {
+  id              String           @unique @default(uuid())
+  inventoryStatus InventoryStatus?
+  quantity        Int?
+  trackInventory  Boolean          @default(false)
+  products        Product[]
+
+  @@map("stocks")
+}
+
+enum InventoryStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+  PARTIALLY_OUT_OF_STOCK
+}
+
+model Variant {
+  id                   String             @unique @default(uuid())
+  convertedPriceData   PriceData?         @relation("convertedPriceDataPriceDataRelation", fields: [convertedPriceDataId], references: [id])
+  costAndProfitData    CostAndProfitData? @relation(fields: [costAndProfitDataId], references: [id])
+  priceData            PriceData?         @relation("priceDataPriceDataRelation", fields: [priceDataId], references: [id])
+  sku                  String?
+  visible              Boolean            @default(false)
+  weight               Int?
+  Product              Product?           @relation(fields: [productId], references: [id])
+  productId            String?
+  costAndProfitDataId  String?
+  convertedPriceDataId String?
+  priceDataId          String?
+
+  @@map("variants")
+}

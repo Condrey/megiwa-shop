@@ -7,8 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ChevronDownIcon } from "lucide-react";
+import { getAllProducts } from "./(table)/action";
+import ListOfProducts from "./(table)/list-of-products";
+import AddProductButton from "./add-product-button";
 
-export default function Page() {
+export default async function Page() {
+  const products = await getAllProducts();
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -33,10 +37,11 @@ export default function Page() {
             <Button variant="outline">
               More actions <ChevronDownIcon />
             </Button>
-            <Button variant="default">New Product</Button>
+            <AddProductButton />
           </div>
         </div>
-        {/* children */}
+
+        <ListOfProducts products={products} />
       </div>
     </>
   );

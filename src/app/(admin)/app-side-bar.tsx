@@ -26,6 +26,12 @@ import {
 } from "@/components/ui/sidebar";
 
 const shopId = "t326t8vc2g881vv8d-d2ebdb2-21dHHUV";
+const productQueryParams = new URLSearchParams({
+  referralInfo: "sidebar",
+  selectedColumns:
+    "0,Name,ProductType,ProductSku,ComparePrice,ProductInventoryStatus,ProductRibbon+false,ProductBrand+false",
+  viewId: "all-items-view",
+}).toString();
 // This is sample data.
 const data = {
   user: {
@@ -59,7 +65,7 @@ const data = {
       items: [
         {
           title: "Products",
-          url: `/manage/${shopId}/megiwa-stores/products`,
+          url: `/manage/${shopId}/megiwa-stores/products?${productQueryParams}`,
         },
         {
           title: "Inventory",

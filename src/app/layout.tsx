@@ -1,7 +1,10 @@
+import { fileRouter } from "@/app/api/uploadthing/core";
 import { Toaster } from "@/components/ui/toaster";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Lora } from "next/font/google";
+import { extractRouterConfig } from "uploadthing/server";
 import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 
@@ -22,14 +25,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head />
       <body className={lora.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
-          enableSystem={true}
+          enableSystem
           disableTransitionOnChange
         >
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <ReactQueryProvider>
+            <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
+            {children}
+          </ReactQueryProvider>
           <Toaster />
         </ThemeProvider>
       </body>

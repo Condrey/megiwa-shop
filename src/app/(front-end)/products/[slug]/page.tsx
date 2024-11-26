@@ -29,7 +29,6 @@ export async function generateMetadata({
   if (!product) notFound();
 
   const mainImage = product.media?.mainMedia?.image;
-
   return {
     title: product.name,
     description: "Get this product on Megiwa Shoppers",
