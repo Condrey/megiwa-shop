@@ -23,7 +23,7 @@ export default function HireAProfessional() {
           </span>
           <Button
             type="button"
-            variant={"ghost"}
+            variant={"link"}
             className="text-primary w-fit "
           >
             Get started
