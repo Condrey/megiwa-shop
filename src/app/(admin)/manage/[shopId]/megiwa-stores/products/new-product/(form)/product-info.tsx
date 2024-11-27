@@ -1,6 +1,6 @@
 import TipTapEditorWithHeader from "@/components/tip-tap-editor/tip-tap-editor-with-header";
 import { UpsertProductSchema } from "@/lib/validation";
-import { InfoIcon, PlusIcon, StarsIcon } from "lucide-react";
+import { PlusIcon, StarsIcon } from "lucide-react";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 import {
@@ -17,11 +17,8 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
 } from "./default-imports";
+import TooltipContainer from "./tooltip-container";
 
 interface ProductInfoProps {
   form: UseFormReturn<UpsertProductSchema>;
@@ -58,26 +55,16 @@ export default function ProductInfo({ form }: ProductInfoProps) {
               <FormItem className="basis-1/3">
                 {/* TODO: link to show appearance of ribbon */}
 
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger type="button">
-                      <div className="flex gap-0.5 items-center">
-                        <FormLabel>Ribbon</FormLabel>
-                        <InfoIcon className="size-6 text-primary" />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-sm">
-                      <span>
-                        Add a label like “New Arrival” or “Sale” to make this
-                        product stand out. It’ll be displayed on your product
-                        galleries and widgets.
-                      </span>{" "}
-                      <Link href="#" className="hover:underline text-primary">
-                        See how ribbons look
-                      </Link>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <TooltipContainer label="Ribbon">
+                  <span>
+                    Add a label like “New Arrival” or “Sale” to make this
+                    product stand out. It’ll be displayed on your product
+                    galleries and widgets.
+                  </span>{" "}
+                  <Link href="#" className="hover:underline text-primary">
+                    See how ribbons look
+                  </Link>
+                </TooltipContainer>
 
                 <FormControl>
                   <Input {...field} placeholder="e.g. New Arrival" />
