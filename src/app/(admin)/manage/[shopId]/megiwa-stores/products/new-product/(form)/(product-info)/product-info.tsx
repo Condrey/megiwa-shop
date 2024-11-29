@@ -1,10 +1,10 @@
 import TipTapEditorWithHeader from "@/components/tip-tap-editor/tip-tap-editor-with-header";
+import { slugify } from "@/lib/utils";
 import { UpsertProductSchema } from "@/lib/validation";
-import { PlusIcon, StarsIcon } from "lucide-react";
+import { debounce } from "lodash";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -17,14 +17,20 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from "./default-imports";
-import TooltipContainer from "./tooltip-container";
+} from "../default-imports";
+import TooltipContainer from "../tooltip-container";
+import AdditionalInfo from "./additional-info";
+import AiForDescription from "./ai-for-description";
 
 interface ProductInfoProps {
   form: UseFormReturn<UpsertProductSchema>;
 }
 
 export default function ProductInfo({ form }: ProductInfoProps) {
+  const debouncedSetSlug = debounce((value, form) => {
+    form.setValue("slug", slugify(value));
+  }, 300);
+
   return (
     <Card>
       <CardHeader>
@@ -42,12 +48,20 @@ export default function ProductInfo({ form }: ProductInfoProps) {
               <FormItem className="basis-2/3">
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Add a product name" />
+                  <Input
+                    {...field}
+                    placeholder="Add a product name"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      debouncedSetSlug(e.target.value, form);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="ribbon"
@@ -60,7 +74,7 @@ export default function ProductInfo({ form }: ProductInfoProps) {
                     Add a label like “New Arrival” or “Sale” to make this
                     product stand out. It’ll be displayed on your product
                     galleries and widgets.
-                  </span>{" "}
+                  </span>
                   <Link href="#" className="hover:underline text-primary">
                     See how ribbons look
                   </Link>
@@ -83,14 +97,7 @@ export default function ProductInfo({ form }: ProductInfoProps) {
               <FormItem>
                 <div className="flex gap-4 items-center justify-between">
                   <FormLabel>Description</FormLabel>
-                  <Button
-                    type="button"
-                    className="text-primary"
-                    variant={"ghost"}
-                  >
-                    <StarsIcon className="mr-2 size-6" />
-                    <span>Generate AI Text</span>
-                  </Button>
+                  <AiForDescription form={form} />
                 </div>
                 <FormControl>
                   <TipTapEditorWithHeader
@@ -115,11 +122,7 @@ export default function ProductInfo({ form }: ProductInfoProps) {
           Share information like return policy or care instructions with your
           customers.
         </p>
-        {/* TODO: implement additional information button  */}
-        <Button type="button" variant={"ghost"} className="text-primary">
-          <PlusIcon className="mr-2 size-4" />
-          <span>Add an info section</span>
-        </Button>
+        <AdditionalInfo form={form} />
       </CardFooter>
     </Card>
   );

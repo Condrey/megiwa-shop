@@ -4,6 +4,7 @@ import MegiwaImage from "@/components/megiwa-image";
 import { DataTableColumnHeader } from "@/components/ui/data-column-header";
 import { ProductData } from "@/lib/types";
 import { formatNumber, getFormattedPrice } from "@/lib/utils";
+import { ProductType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const useProductColumns: ColumnDef<ProductData>[] = [
@@ -38,6 +39,19 @@ export const useProductColumns: ColumnDef<ProductData>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Type" />
     ),
+    cell: ({ row }) => {
+      const product = row.original;
+      const productTypeMapping: Record<ProductType, string> = {
+        DIGITAL: "Digital",
+        UNSPECIFIED_PRODUCT_TYPE: "N/A",
+        PHYSICAL: "Physical",
+      };
+      return (
+        productTypeMapping[
+          product.productType || "UNSPECIFIED_PRODUCT_TYPE"
+        ].toString() || "N/A"
+      );
+    },
   },
   {
     accessorKey: "sku",
@@ -48,7 +62,7 @@ export const useProductColumns: ColumnDef<ProductData>[] = [
   {
     accessorKey: "priceData",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Type" />
+      <DataTableColumnHeader column={column} title="Price" />
     ),
     cell: ({ row }) => {
       const product = row.original;

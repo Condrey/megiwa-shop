@@ -13,6 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Shop {
+  id          String       @id @default(uuid())
+  products    Product[]
+  collections Collection[]
+  name        String
+  logo        Media?       @relation(fields: [mediaId], references: [id])
+  address     String?
+  mediaId     String?
+}
+
 model Product {
   id                     String                  @unique @default(uuid())
   createdAt              DateTime                @default(now())
@@ -37,6 +47,7 @@ model Product {
   productOptions         ProductOption[]
   productPageUrl         PageUrl?                @relation(fields: [pageUrlId], references: [id])
   productType            ProductType?
+  ribbons                String[]
   ribbon                 String?
   seoData                SeoSchema?              @relation(fields: [seoSchemaId], references: [id])
   sku                    String?
@@ -58,6 +69,8 @@ model Product {
   pageUrlId              String?
   seoSchemaId            String?
   stockId                String?
+  shop                   Shop?                   @relation(fields: [shopId], references: [id])
+  shopId                 String?
 
   @@map("products")
 }
@@ -136,8 +149,10 @@ model Media {
   imageId               String?
   products              Product[]
   choices               Choice[]
-  MediaItemUrlAndSize   MediaItemUrlAndSize? @relation(fields: [mediaItemUrlAndSizeId], references: [id])
+  mediaItemUrlAndSize   MediaItemUrlAndSize? @relation(fields: [mediaItemUrlAndSizeId], references: [id])
   mediaItemUrlAndSizeId String?
+  collections           Collection[]
+  shop                  Shop[]
 
   @@map("medias")
 }
@@ -392,4 +407,19 @@ model Variant {
   priceDataId          String?
 
   @@map("variants")
+}
+
+model Collection {
+  id               String  @id @default(uuid())
+  description      String?
+  media            Media?  @relation(fields: [mediaId], references: [id])
+  name             String?
+  numberOfProducts Int?
+  slug             String?
+  visible          Boolean @default(true)
+  mediaId          String?
+  shop             Shop?   @relation(fields: [shopId], references: [id])
+  shopId           String?
+
+  @@map("collections")
 }

@@ -60,6 +60,15 @@ export function formatNumber(n: number): string {
   }).format(n);
 }
 
+export function slugify(input: string | undefined): string {
+  return input
+    ? input
+        .toLocaleLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^a-z0-9]/g, "")
+    : "";
+}
+
 export function getFormattedPrice(product: ProductData) {
   const minPrice = product.priceRange?.minValue;
   const maxPrice = product.priceRange?.maxValue;

@@ -6,6 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { formatNumber } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { getAllProducts } from "./(table)/action";
 import ListOfProducts from "./(table)/list-of-products";
@@ -31,7 +32,10 @@ export default async function Page() {
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="flex gap-4 justify-between items-center">
           <h1 className="text-xl font-bold">
-            Products <span className="text-muted-foreground">{15}</span>
+            Products{" "}
+            <span className="text-muted-foreground">
+              {formatNumber(products.length)}
+            </span>
           </h1>
           <div className="gap-4 items-center flex">
             <Button variant="outline">

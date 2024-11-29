@@ -62,7 +62,7 @@ export default function TipTapEditorWithHeader({
     ],
     content: initialContent,
     onUpdate: ({ editor }) => {
-      onTextChanged(JSON.stringify(editor.getHTML()));
+      onTextChanged(editor.getHTML());
     },
   });
 
@@ -74,7 +74,7 @@ export default function TipTapEditorWithHeader({
       )}
     >
       <TipTapEditorHeader editor={editor} />
-      <EditorContent editor={editor} className="min-h-[250px] px-5 " />
+      <EditorContent editor={editor} className="min-h-[100px] px-5 " />
     </div>
   );
 }

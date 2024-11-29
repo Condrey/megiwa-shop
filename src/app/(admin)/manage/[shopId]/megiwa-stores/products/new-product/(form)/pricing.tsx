@@ -3,6 +3,7 @@ import { DiscountEnumType } from "@prisma/client";
 import { PercentIcon } from "lucide-react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
+import { NumberInput } from "../../../../../../../../components/number-input/number-input";
 import {
   Card,
   CardContent,
@@ -54,13 +55,20 @@ export default function Pricing({ form }: PricingProps) {
         <div className="flex  w-full">
           <FormField
             control={form.control}
-            name="price"
+            name="priceData.price"
             render={({ field }) => (
               <FormItem className="basis-1/3">
                 <FormLabel>price</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input type="number" className=" ps-12" {...field} />
+                    <Input
+                      type="number"
+                      className=" ps-12"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(Number(e.target.value) || 0)
+                      }
+                    />
                     <span className="absolute  left-2 top-1/2 -translate-y-1/2">
                       {currency}
                     </span>
@@ -91,12 +99,21 @@ export default function Pricing({ form }: PricingProps) {
                     <FormLabel>Discount</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input
-                          {...field}
-                          placeholder={"0"}
-                          type="number"
-                          className="pe-[6.5rem]"
-                        />
+                        {form.watch("discount.type") === "PERCENT" ? (
+                          <NumberInput
+                            placeholder={"0"}
+                            className="pe-[6.5rem]"
+                            min={0}
+                            max={100}
+                            {...field}
+                          />
+                        ) : (
+                          <NumberInput
+                            placeholder={"0"}
+                            className="pe-[6.5rem]"
+                            {...field}
+                          />
+                        )}
                         <div className="absolute right-0 top-1/2 border-l -translate-y-1/2">
                           <ToggleGroup
                             type="single"
@@ -121,7 +138,7 @@ export default function Pricing({ form }: PricingProps) {
               />
               <FormField
                 control={form.control}
-                name="salePrice"
+                name="priceData.discountedPrice"
                 render={({ field }) => (
                   <FormItem className="basis-1/3">
                     <FormLabel>Sale price</FormLabel>
@@ -177,7 +194,7 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem className="basis-1/3">
                         <FormControl>
-                          <Input {...field} type="number" placeholder="0" />
+                          <Input type="number" placeholder="0" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -237,7 +254,7 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem className="basis-1/3">
                         <FormControl>
-                          <Input {...field} type="number" placeholder="0" />
+                          <Input type="number" placeholder="0" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

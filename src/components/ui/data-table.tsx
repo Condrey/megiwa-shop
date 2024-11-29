@@ -47,7 +47,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
 
   const [columnVisibility, setColumnVisibility] =
@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-2xl bg-card p-4">
+    <div className="rounded-md bg-card p-4">
       {/* filtering , column visibility and children */}
       <div className="flex items-center justify-between py-4">
         {!!filterColumnId && (
@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -123,14 +123,14 @@ export function DataTable<TData, TValue>({
                     }
                     className={cn(
                       "cursor-pointer",
-                      rowItem.id === selectedItemId && "bg-muted",
+                      rowItem.id === selectedItemId && "bg-muted"
                     )}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext(),
+                          cell.getContext()
                         )}
                       </TableCell>
                     ))}

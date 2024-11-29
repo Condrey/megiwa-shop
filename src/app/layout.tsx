@@ -3,12 +3,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
-import { Lora } from "next/font/google";
+// import { Lora } from "next/font/google";
 import { extractRouterConfig } from "uploadthing/server";
 import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 
-const lora = Lora({ subsets: ["latin"] });
+// const lora = Lora({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <body className={lora.className}>
+      <body /*className={lora.className}*/>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

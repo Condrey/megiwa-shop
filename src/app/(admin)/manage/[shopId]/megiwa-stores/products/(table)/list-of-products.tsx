@@ -49,7 +49,12 @@ export default function ListOfProducts({ products }: ListOfProductsProps) {
   }
   return (
     <div>
-      <DataTable columns={useProductColumns} data={data} />
+      <DataTable
+        columns={useProductColumns}
+        data={data}
+        filterColumnId="name"
+        selectedItemId={"name"}
+      />
     </div>
   );
 }

@@ -29,7 +29,17 @@ export {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+export {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 export { Switch } from "@/components/ui/switch";
+export { Textarea } from "@/components/ui/textarea";
 export { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 export {
   Tooltip,
