@@ -45,7 +45,7 @@ export async function createNewProduct(product: UpsertProductSchema) {
       customTextFields: { create: customTextFields },
       stock: { create: { ...stock } },
       sku,
-      shopId,
+      // shopId: "0839d182-2e4e-49a9-92fd-bf813bbcd772",
       weight,
       brand,
       additionalInfoSections: { create: additionalInfoSections },
@@ -64,11 +64,10 @@ export async function createNewProduct(product: UpsertProductSchema) {
       variants: { create: variants },
       visible,
       costRange: { create: { ...costRange } },
-      id,
       numericId,
       priceRange: { create: { ...priceRange } },
-      productPageUrl: { create: { ...priceRange } },
-      weightRange: { create: { ...priceRange } },
+      productPageUrl: { create: { ...productPageUrl } },
+      weightRange: { create: { ...weightRange } },
     },
   });
 }
