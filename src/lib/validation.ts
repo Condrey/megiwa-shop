@@ -8,7 +8,9 @@ import cuid from "cuid";
 import { z } from "zod";
 
 export const requiredString = z.string().trim().min(1, "Required");
-export const requiredNumber = z.number().min(1, "Required");
+const requiredNumber = z
+  .number()
+  .min(0, "Value must be greater than or equal to 0");
 
 // Product
 const choicesSchema = z
@@ -27,23 +29,37 @@ const rangeSchema = z
     maxValue: requiredNumber,
   })
   .optional();
-const priceDataSchema = z.object({
-  id: z.string().trim().optional(),
-  currency: requiredString,
-  price: requiredNumber,
-  discountedPrice: requiredNumber,
-  formatted: z
-    .object({
-      id: z.string().trim().optional(),
-      price: requiredString,
-      discountedPrice: requiredString,
-    })
-    .optional(),
-});
+const priceDataSchema = z
+  .object({
+    id: z.string().trim().optional(),
+    currency: requiredString,
+    price: requiredNumber.min(0, "Price must be at least 0"),
+    discountedPrice: requiredNumber.min(
+      0,
+      "Discounted price must be at least 0"
+    ),
+    formatted: z
+      .object({
+        id: z.string().trim().optional(),
+        price: z.string().trim(),
+        discountedPrice: z.string().trim(),
+      })
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.discountedPrice > data.price) {
+      ctx.addIssue({
+        path: ["discountedPrice"],
+        code: z.ZodIssueCode.custom,
+        message:
+          "Discounted price must be less than or equal to the original price",
+      });
+    }
+  });
 const stockSchema = z
   .object({
     id: z.string().trim().optional(),
-    inventoryStatus: z.nativeEnum(InventoryStatus),
+    inventoryStatus: z.nativeEnum(InventoryStatus).optional(),
     quantity: z.number().optional(),
     trackInventory: z.boolean(),
   })
@@ -64,7 +80,15 @@ export const upsertProductSchema = z.object({
       type: z.nativeEnum(DiscountEnumType).default("AMOUNT"),
       value: requiredNumber,
     })
-    .optional(),
+    .superRefine((data, ctx) => {
+      if (data.type === "PERCENT" && data.value > 100) {
+        ctx.addIssue({
+          path: ["value"],
+          code: z.ZodIssueCode.custom,
+          message: "Percentage must be from 0 to 100",
+        });
+      }
+    }),
   pricePerUnitData: z
     .object({
       id: z.string().trim().optional(),

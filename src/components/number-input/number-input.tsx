@@ -22,7 +22,7 @@ export function NumberInput<T extends FieldValues>({
   max,
   step = 1,
   className = "",
-  placeholder = "Enter a number",
+  placeholder = "0",
   prefix,
   ...props
 }: NumberInputProps<T>) {

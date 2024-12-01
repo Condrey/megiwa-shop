@@ -15,7 +15,6 @@ import {
   FormLabel,
   FormMessage,
   groupedUnits,
-  Input,
   Label,
   Select,
   SelectContent,
@@ -39,6 +38,7 @@ export default function Pricing({ form }: PricingProps) {
   const [onSaleSwitched, setOnSaleSwitched] = useState(false);
   const [onShowPricePerUnitClicked, setOnShowPricePerUnitClicked] =
     useState(false);
+  const watchedDiscountType = form.watch("discount.type");
   function handleOnSaleSwitch(checked: boolean) {
     setOnSaleSwitched(checked);
   }
@@ -58,21 +58,9 @@ export default function Pricing({ form }: PricingProps) {
             name="priceData.price"
             render={({ field }) => (
               <FormItem className="basis-1/3">
-                <FormLabel>price</FormLabel>
+                <FormLabel>Price</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      className=" ps-12"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(Number(e.target.value) || 0)
-                      }
-                    />
-                    <span className="absolute  left-2 top-1/2 -translate-y-1/2">
-                      {currency}
-                    </span>
-                  </div>
+                  <NumberInput prefix={currency} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -96,39 +84,60 @@ export default function Pricing({ form }: PricingProps) {
                 name="discount.value"
                 render={({ field }) => (
                   <FormItem className="basis-1/3">
-                    <FormLabel>Discount</FormLabel>
+                    <FormLabel>
+                      {`Discount ${
+                        watchedDiscountType === "PERCENT"
+                          ? "Percentage"
+                          : "Amount"
+                      }`}
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        {form.watch("discount.type") === "PERCENT" ? (
-                          <NumberInput
-                            placeholder={"0"}
-                            className="pe-[6.5rem]"
-                            min={0}
-                            max={100}
-                            {...field}
-                          />
-                        ) : (
-                          <NumberInput
-                            placeholder={"0"}
-                            className="pe-[6.5rem]"
-                            {...field}
-                          />
-                        )}
+                        <NumberInput
+                          placeholder={"0"}
+                          className="pe-[6.5rem]"
+                          min={0}
+                          max={
+                            watchedDiscountType === "PERCENT" ? 100 : undefined
+                          }
+                          {...field}
+                        />
+
                         <div className="absolute right-0 top-1/2 border-l -translate-y-1/2">
-                          <ToggleGroup
-                            type="single"
-                            defaultValue={form.getValues("discount.type")}
-                          >
-                            {Object.values(DiscountEnumType).map((type) => (
-                              <ToggleGroupItem
-                                key={type}
-                                value={type}
-                                aria-label={`Toggle ${type}`}
-                              >
-                                {type === "AMOUNT" ? currency : <PercentIcon />}
-                              </ToggleGroupItem>
-                            ))}
-                          </ToggleGroup>
+                          <FormField
+                            control={form.control}
+                            name="discount.type"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <ToggleGroup
+                                    type="single"
+                                    value={field.value}
+                                    onValueChange={(value) =>
+                                      field.onChange(value)
+                                    }
+                                  >
+                                    {Object.values(DiscountEnumType).map(
+                                      (type) => (
+                                        <ToggleGroupItem
+                                          key={type}
+                                          value={type}
+                                          aria-label={type}
+                                        >
+                                          {type === "AMOUNT" ? (
+                                            currency
+                                          ) : (
+                                            <PercentIcon />
+                                          )}
+                                        </ToggleGroupItem>
+                                      )
+                                    )}
+                                  </ToggleGroup>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </div>
                       </div>
                     </FormControl>
@@ -144,7 +153,7 @@ export default function Pricing({ form }: PricingProps) {
                     <FormLabel>Sale price</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input type="number" className=" ps-12" {...field} />
+                        <NumberInput className=" ps-12" {...field} />
                         <span className="absolute  left-2 top-1/2 -translate-y-1/2">
                           {currency}
                         </span>
@@ -194,7 +203,7 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem className="basis-1/3">
                         <FormControl>
-                          <Input type="number" placeholder="0" {...field} />
+                          <NumberInput placeholder="0" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -254,7 +263,7 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem className="basis-1/3">
                         <FormControl>
-                          <Input type="number" placeholder="0" {...field} />
+                          <NumberInput placeholder="0" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -313,12 +322,7 @@ export default function Pricing({ form }: PricingProps) {
                   Your customers won’t see this.{" "}
                 </TooltipContainer>
                 <FormControl>
-                  <div className="relative">
-                    <Input type="number" className=" ps-12" {...field} />
-                    <span className="absolute  left-2 top-1/2 -translate-y-1/2">
-                      {currency}
-                    </span>
-                  </div>
+                  <NumberInput prefix={currency} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -333,12 +337,7 @@ export default function Pricing({ form }: PricingProps) {
                   The price of the product minus your cost of goods.
                 </TooltipContainer>
                 <FormControl>
-                  <div className="relative">
-                    <Input type="number" className=" ps-12" {...field} />
-                    <span className="absolute  left-2 top-1/2 -translate-y-1/2">
-                      {currency}
-                    </span>
-                  </div>
+                  <NumberInput prefix={currency} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -355,9 +354,9 @@ export default function Pricing({ form }: PricingProps) {
                 </TooltipContainer>
                 <FormControl>
                   <div className="relative">
-                    <Input type="number" className=" pe-12" {...field} />
+                    <NumberInput className=" pe-12" {...field} />
                     <span className="absolute  right-2 top-1/2 -translate-y-1/2">
-                      <PercentIcon />
+                      <PercentIcon className="size-5" />
                     </span>
                   </div>
                 </FormControl>

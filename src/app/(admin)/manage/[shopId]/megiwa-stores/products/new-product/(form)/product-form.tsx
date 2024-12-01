@@ -41,19 +41,23 @@ export default function ProductForm() {
   const form = useForm<UpsertProductSchema>({
     resolver: zodResolver(upsertProductSchema),
     defaultValues: {
-      id: cuid(),
+      id: undefined,
       name: "",
       ribbon: "",
       ribbons: [],
       description: "",
-      discount: {
-        value: 0,
-        type: "PERCENT",
-      },
+      discount: { type: "PERCENT", value: 0 },
       pricePerUnitData: undefined,
-      costAndProfitData: undefined,
+      costAndProfitData: {
+        itemCost: 0,
+        profit: 0,
+        profitMargin: 0,
+      },
       customTextFields: [],
-      stock: undefined,
+      stock: {
+        trackInventory: false,
+        inventoryStatus: "IN_STOCK",
+      },
       sku: undefined,
       shopId: cuid(),
       weight: undefined,
@@ -66,7 +70,7 @@ export default function ProductForm() {
       priceData: {
         currency,
         price: undefined,
-        discountedPrice: undefined,
+        discountedPrice: 0,
         formatted: {
           price: "",
           discountedPrice: "",
@@ -139,10 +143,10 @@ export default function ProductForm() {
             <Subscriptions form={form} />
           </div>
           <div className="lg:col-span-1 flex auto-cols-max  flex-col gap-8 w-full ">
-            {/* <pre>{JSON.stringify(form.watch(form), null, 2)}</pre>
+            {/* <pre>{JSON.stringify(form.watch(form), null, 2)}</pre> */}
             <pre className="text-destructive  ">
               {JSON.stringify(form.formState.errors, null, 2)}
-            </pre> */}
+            </pre>
             <Visibilities form={form} />
             <Categories form={form} />
             <MarketingAndSeo form={form} />

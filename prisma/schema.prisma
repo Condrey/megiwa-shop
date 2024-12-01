@@ -52,7 +52,7 @@ model Product {
   seoData                SeoSchema?              @relation(fields: [seoSchemaId], references: [id])
   sku                    String?
   slug                   String?
-  Stock                  Stock?                  @relation(fields: [stockId], references: [id])
+  stock                  Stock?                  @relation(fields: [stockId], references: [id])
   variants               Variant[]
   visible                Boolean                 @default(false)
   weight                 Int?
