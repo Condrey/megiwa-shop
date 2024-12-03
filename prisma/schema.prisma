@@ -23,6 +23,21 @@ model Shop {
   mediaId     String?
 }
 
+model Collection {
+  id               String  @id @default(uuid())
+  description      String?
+  media            Media?  @relation(fields: [mediaId], references: [id])
+  name             String?
+  numberOfProducts Int?
+  slug             String?
+  visible          Boolean @default(true)
+  mediaId          String?
+  shop             Shop?   @relation(fields: [shopId], references: [id])
+  shopId           String?
+
+  @@map("collections")
+}
+
 model Product {
   id                     String                  @unique @default(uuid())
   createdAt              DateTime                @default(now())
@@ -407,19 +422,4 @@ model Variant {
   priceDataId          String?
 
   @@map("variants")
-}
-
-model Collection {
-  id               String  @id @default(uuid())
-  description      String?
-  media            Media?  @relation(fields: [mediaId], references: [id])
-  name             String?
-  numberOfProducts Int?
-  slug             String?
-  visible          Boolean @default(true)
-  mediaId          String?
-  shop             Shop?   @relation(fields: [shopId], references: [id])
-  shopId           String?
-
-  @@map("collections")
 }

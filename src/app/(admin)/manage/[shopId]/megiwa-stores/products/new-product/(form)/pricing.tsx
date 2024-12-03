@@ -1,5 +1,6 @@
 import { UpsertProductSchema } from "@/lib/validation";
-import { DiscountEnumType } from "@prisma/client";
+import { convertUnits, getUnitGroup } from "@/utils/unit-conversion";
+import { DiscountEnumType, MeasurementEnumUnit } from "@prisma/client";
 import { PercentIcon } from "lucide-react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -35,16 +36,94 @@ interface PricingProps {
 
 export default function Pricing({ form }: PricingProps) {
   const currency = "USh";
+  const [basePricePerUnit, setBasePricePerUnit] = useState<string>("");
   const [onSaleSwitched, setOnSaleSwitched] = useState(false);
   const [onShowPricePerUnitClicked, setOnShowPricePerUnitClicked] =
     useState(false);
+
   const watchedDiscountType = form.watch("discount.type");
   function handleOnSaleSwitch(checked: boolean) {
+    if (!checked) {
+      form.setValue("discount.value", 0);
+      form.setValue("priceData.discountedPrice", 0);
+    }
     setOnSaleSwitched(checked);
   }
   function handleShowPricePerUnitSwitch(checked: boolean) {
     setOnShowPricePerUnitClicked(checked);
   }
+
+  function updateProfitsCostOfGoodArbitrarily(costOfGood?: number) {
+    const watchedCostOfGood = form.watch("costAndProfitData.itemCost");
+    const amount = form.watch("priceData.discountedPrice");
+    const parsedCostOfGood = Number(costOfGood || watchedCostOfGood);
+    const parsedAmount = Number(amount);
+    if (isNaN(parsedCostOfGood) || parsedCostOfGood === 0) {
+      form.setValue("costAndProfitData.profit", parsedAmount);
+      form.setValue("costAndProfitData.profitMargin", 100);
+    } else {
+      const profit = parsedAmount - parsedCostOfGood;
+      form.setValue("costAndProfitData.profit", profit);
+      form.setValue(
+        "costAndProfitData.profitMargin",
+        parseFloat(((profit / parsedAmount) * 100).toFixed(2))
+      );
+    }
+  }
+
+  function updateDiscountPriceArbitrarily(value?: DiscountEnumType) {
+    const amount = form.watch("priceData.price");
+    const discount = form.watch("discount.value");
+    const parsedAmount = Number(amount);
+    const parsedDiscount = Number(discount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      form.setValue("priceData.discountedPrice", 0);
+      return;
+    }
+    if ((value || watchedDiscountType) === "PERCENT" && parsedDiscount >= 0) {
+      form.setValue(
+        "priceData.discountedPrice",
+        parsedAmount - (parsedDiscount / 100) * parsedAmount
+      );
+    } else if (
+      (value || watchedDiscountType) === "AMOUNT" &&
+      parsedDiscount >= 0
+    ) {
+      form.setValue("priceData.discountedPrice", parsedAmount - parsedDiscount);
+    }
+    updateProfitsCostOfGoodArbitrarily();
+    calculateBasePricePerUnit();
+  }
+
+  function calculateBasePricePerUnit(discountedPrice?: number) {
+    const sellingPrice =
+      discountedPrice || form.watch("priceData.discountedPrice");
+    const totalQuantity = form.watch("pricePerUnitData.totalQuantity");
+    const totalQuantityMeasurement = form.watch(
+      "pricePerUnitData.totalMeasurementUnit"
+    );
+    const baseQuantity = form.watch("pricePerUnitData.baseQuality");
+    const baseQuantityMeasureMent = form.watch(
+      "pricePerUnitData.baseMeasurementUnit"
+    );
+
+    const convertedQuantity = convertUnits(
+      sellingPrice,
+      totalQuantity,
+      baseQuantity,
+      totalQuantityMeasurement,
+      baseQuantityMeasureMent,
+      currency
+    );
+
+    setBasePricePerUnit(convertedQuantity);
+  }
+
+  const baseMeasurementOptions = getUnitGroup(
+    form.watch("pricePerUnitData.totalMeasurementUnit") ||
+      MeasurementEnumUnit.KG
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -60,7 +139,11 @@ export default function Pricing({ form }: PricingProps) {
               <FormItem className="basis-1/3">
                 <FormLabel>Price</FormLabel>
                 <FormControl>
-                  <NumberInput prefix={currency} {...field} />
+                  <NumberInput
+                    prefix={currency}
+                    {...field}
+                    postChange={() => updateDiscountPriceArbitrarily()}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,11 +168,9 @@ export default function Pricing({ form }: PricingProps) {
                 render={({ field }) => (
                   <FormItem className="basis-1/3">
                     <FormLabel>
-                      {`Discount ${
-                        watchedDiscountType === "PERCENT"
-                          ? "Percentage"
-                          : "Amount"
-                      }`}
+                      {watchedDiscountType === "PERCENT"
+                        ? "Percentage discount"
+                        : "Discount amount"}
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
@@ -101,6 +182,7 @@ export default function Pricing({ form }: PricingProps) {
                             watchedDiscountType === "PERCENT" ? 100 : undefined
                           }
                           {...field}
+                          postChange={() => updateDiscountPriceArbitrarily()}
                         />
 
                         <div className="absolute right-0 top-1/2 border-l -translate-y-1/2">
@@ -113,9 +195,14 @@ export default function Pricing({ form }: PricingProps) {
                                   <ToggleGroup
                                     type="single"
                                     value={field.value}
-                                    onValueChange={(value) =>
-                                      field.onChange(value)
-                                    }
+                                    onValueChange={(
+                                      value: DiscountEnumType
+                                    ) => {
+                                      field.onChange(value || "PERCENT");
+                                      updateDiscountPriceArbitrarily(
+                                        value || "PERCENT"
+                                      );
+                                    }}
                                   >
                                     {Object.values(DiscountEnumType).map(
                                       (type) => (
@@ -203,7 +290,11 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem className="basis-1/3">
                         <FormControl>
-                          <NumberInput placeholder="0" {...field} />
+                          <NumberInput
+                            placeholder="0"
+                            {...field}
+                            postChange={() => calculateBasePricePerUnit()}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -215,7 +306,14 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e: MeasurementEnumUnit) => {
+                            field.onChange(e || MeasurementEnumUnit.KG);
+                            form.setValue(
+                              "pricePerUnitData.baseMeasurementUnit",
+                              e
+                            );
+                            calculateBasePricePerUnit();
+                          }}
                           value={field.value}
                         >
                           <FormControl>
@@ -246,6 +344,10 @@ export default function Pricing({ form }: PricingProps) {
                     )}
                   />
                 </div>
+                <div className="flex flex-col pt-3">
+                  <FormLabel>Base price per unit</FormLabel>
+                  <h2>{basePricePerUnit}</h2>
+                </div>
               </div>
               <div className="basis-1/3 flex flex-col gap-2">
                 <div className="flex items-center">
@@ -263,7 +365,11 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem className="basis-1/3">
                         <FormControl>
-                          <NumberInput placeholder="0" {...field} />
+                          <NumberInput
+                            placeholder="0"
+                            {...field}
+                            postChange={() => calculateBasePricePerUnit()}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -275,7 +381,10 @@ export default function Pricing({ form }: PricingProps) {
                     render={({ field }) => (
                       <FormItem>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e) => {
+                            field.onChange(e);
+                            calculateBasePricePerUnit();
+                          }}
                           value={field.value}
                         >
                           <FormControl>
@@ -284,19 +393,11 @@ export default function Pricing({ form }: PricingProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {Object.entries(groupedUnits).map(
-                              ([group, units]) => (
-                                <SelectGroup key={group}>
-                                  <SelectLabel>{group}</SelectLabel>
-                                  {units.map((unit) => (
-                                    <SelectItem
-                                      key={unit.unit}
-                                      value={unit.unit}
-                                    >
-                                      {`${unit.label} (${unit.abbreviation})`}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
+                            {baseMeasurementOptions.map(
+                              ({ unit, label, abbreviation }) => (
+                                <SelectItem key={unit} value={unit}>
+                                  {`${label} (${abbreviation})`}
+                                </SelectItem>
                               )
                             )}
                           </SelectContent>
@@ -322,7 +423,11 @@ export default function Pricing({ form }: PricingProps) {
                   Your customers won’t see this.{" "}
                 </TooltipContainer>
                 <FormControl>
-                  <NumberInput prefix={currency} {...field} />
+                  <NumberInput
+                    prefix={currency}
+                    {...field}
+                    postChange={updateProfitsCostOfGoodArbitrarily}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -337,7 +442,7 @@ export default function Pricing({ form }: PricingProps) {
                   The price of the product minus your cost of goods.
                 </TooltipContainer>
                 <FormControl>
-                  <NumberInput prefix={currency} {...field} />
+                  <NumberInput disabled prefix={currency} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -354,9 +459,9 @@ export default function Pricing({ form }: PricingProps) {
                 </TooltipContainer>
                 <FormControl>
                   <div className="relative">
-                    <NumberInput className=" pe-12" {...field} />
+                    <NumberInput disabled className=" pe-12" {...field} />
                     <span className="absolute  right-2 top-1/2 -translate-y-1/2">
-                      <PercentIcon className="size-5" />
+                      <PercentIcon className="size-4 text-muted-foreground" />
                     </span>
                   </div>
                 </FormControl>

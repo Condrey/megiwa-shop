@@ -15,6 +15,8 @@ interface NumberInputProps<T extends FieldValues>
   className?: string;
   placeholder?: string;
   prefix?: string;
+  disabled?: boolean;
+  postChange?: (value: number) => void;
 }
 
 export function NumberInput<T extends FieldValues>({
@@ -24,6 +26,8 @@ export function NumberInput<T extends FieldValues>({
   className = "",
   placeholder = "0",
   prefix,
+  disabled = false,
+  postChange,
   ...props
 }: NumberInputProps<T>) {
   const { field } = useController(props);
@@ -37,13 +41,17 @@ export function NumberInput<T extends FieldValues>({
       )}
       <Input
         type="number"
+        disabled={disabled}
         min={min}
         max={max}
         step={step}
         className={cn(`ps-${prefix ? 12 : 4}`, "no-caret", className)}
         placeholder={placeholder}
         value={field.value ?? ""}
-        onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+        onChange={(e) => {
+          field.onChange(Number(e.target.value) || 0);
+          !!postChange && postChange(Number(e.target.value) || 0);
+        }}
         onBlur={field.onBlur}
         name={field.name}
         ref={field.ref}

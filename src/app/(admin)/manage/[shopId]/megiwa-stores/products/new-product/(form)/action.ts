@@ -18,7 +18,7 @@ export async function createNewProduct(product: UpsertProductSchema) {
     weight,
     brand,
     additionalInfoSections,
-    collectionIds,
+    collections,
     manageVariants,
     priceData,
     productOptions,
@@ -49,7 +49,7 @@ export async function createNewProduct(product: UpsertProductSchema) {
       weight,
       brand,
       additionalInfoSections: { create: additionalInfoSections },
-      collectionIds: collectionIds.filter(Boolean) as string[],
+      collectionIds: collections.map((c) => c.id).filter(Boolean) as string[],
       manageVariants,
       priceData: {
         create: {

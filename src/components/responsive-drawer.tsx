@@ -25,7 +25,7 @@ interface ResponsiveDrawerProps {
   setOpen: (open: boolean) => void;
   title: string;
   children: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   className?: string;
 }
 

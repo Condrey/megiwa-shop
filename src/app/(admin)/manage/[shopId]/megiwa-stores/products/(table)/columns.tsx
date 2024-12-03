@@ -3,7 +3,7 @@
 import MegiwaImage from "@/components/megiwa-image";
 import { DataTableColumnHeader } from "@/components/ui/data-column-header";
 import { ProductData } from "@/lib/types";
-import { formatNumber, getFormattedPrice } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
 import { ProductType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -26,9 +26,9 @@ export const useProductColumns: ColumnDef<ProductData>[] = [
             height={55}
             width={55}
           />
-          <div className="flex flex-col gap-0.5">
-            <h4>{product.name}</h4>
-            <p>{`${formatNumber(product._count.variants)} variant${product._count.variants === 1 ? "" : "s"}`}</p>
+          <div className="flex flex-col gap-0.5 overflow-hidden">
+            <h4 className="line-clamp-2 ">{product.name}</h4>
+            <p className="text-muted-foreground">{`${formatNumber(product._count.variants)} variant${product._count.variants === 1 ? "" : "s"}`}</p>
           </div>
         </div>
       );
@@ -66,8 +66,18 @@ export const useProductColumns: ColumnDef<ProductData>[] = [
     ),
     cell: ({ row }) => {
       const product = row.original;
-
-      return getFormattedPrice(product);
+      const discountedPrice = product.priceData?.discountedPrice;
+      if (!!discountedPrice && discountedPrice > 0) {
+        return (
+          <div className="flex flex-col">
+            <span className="line-through text-muted-foreground">
+              {product.priceData?.formatted?.price ?? 0}
+            </span>
+            <span>{product.priceData?.formatted?.discountedPrice ?? 0}</span>
+          </div>
+        );
+      }
+      return <span>{product.priceData?.formatted?.price ?? 0}</span>;
     },
   },
 ];

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
 import {
-  FormLabel,
+  Label,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -22,13 +22,14 @@ export default function TooltipContainer({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger type="button">
-          <div className="flex gap-2 justify-start items-center">
-            <FormLabel className="line-clamp-1">{label}</FormLabel>
-            <InfoIcon className="size-5 text-primary" />
-          </div>
+        <TooltipTrigger
+          type="button"
+          className="flex gap-2 justify-start h-fit items-center"
+        >
+          <Label className="line-clamp-1 pb-1">{label}</Label>
+          <InfoIcon className="size-5 text-primary mb-1" />
         </TooltipTrigger>
-        <TooltipContent className={cn("max-w-xs p-4", className)}>
+        <TooltipContent className={cn("max-w-xs flex p-4 z-50", className)}>
           {children}
         </TooltipContent>
       </Tooltip>

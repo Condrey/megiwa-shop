@@ -12,16 +12,25 @@ const requiredNumber = z
   .number()
   .min(0, "Value must be greater than or equal to 0");
 
+// Collection
+export const upsertCollectionSchema = z.object({
+  id: z.string().trim().optional(),
+  shopId: requiredString.default(cuid()),
+  visible: z.boolean().default(true),
+  slug: requiredString,
+  numberOfProducts: z.number().optional(),
+  name: requiredString,
+  description: z.string().optional(),
+});
+export type UpsertCollectionSchema = z.infer<typeof upsertCollectionSchema>;
 // Product
-const choicesSchema = z
-  .array(
-    z.object({
-      id: z.string().trim().optional(),
-      value: requiredString,
-      description: requiredString,
-    })
-  )
-  .optional();
+const choiceSchema = z.object({
+  id: z.string().trim().optional(),
+  value: requiredString,
+  description: requiredString,
+});
+export type ChoiceSchema = z.infer<typeof choiceSchema>;
+const choicesSchema = z.array(choiceSchema).optional();
 const rangeSchema = z
   .object({
     id: z.string().trim().optional(),
@@ -160,7 +169,7 @@ export const upsertProductSchema = z.object({
     })
     .optional(),
   numericId: z.string().trim().optional(),
-  collectionIds: z.array(z.string().trim().optional()),
+  collections: z.array(upsertCollectionSchema),
   variants: z.array(
     z.object({
       id: z.string().trim().optional(),

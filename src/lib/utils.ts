@@ -19,10 +19,16 @@ export function formatCurrency(
   price: number | string = 0,
   currency: string | null
 ) {
-  return Intl.NumberFormat("en", {
+  const numericPrice = Number(price);
+
+  const formattedPrice = Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency || "UGX",
-  }).format(Number(price));
+    minimumFractionDigits: numericPrice % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(numericPrice);
+
+  return formattedPrice;
 }
 
 export function findVariant(

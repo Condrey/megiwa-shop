@@ -19,7 +19,7 @@ import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import ProductInfo from "./(product-info)/product-info";
 import AdvancedSetting from "./advanced-setting";
-import Categories from "./categories";
+import Categories from "./categories/categories";
 import CustomText from "./custom-text";
 import { Form } from "./default-imports";
 import HireAProfessional from "./hire-a-professional";
@@ -58,7 +58,7 @@ export default function ProductForm() {
         trackInventory: false,
         inventoryStatus: "IN_STOCK",
       },
-      sku: undefined,
+      sku: Date.now().toString(),
       shopId: cuid(),
       weight: undefined,
       visible: true,
@@ -84,8 +84,8 @@ export default function ProductForm() {
         base: baseUrl,
         path: pathName,
       },
-      numericId: "",
-      collectionIds: [],
+      numericId: Date.now().toString(),
+      collections: [],
       variants: [],
     },
   });
@@ -104,7 +104,7 @@ export default function ProductForm() {
         <header className="flex z-20 sticky py-4 top-0 bg-sidebar-content-background h-16 w-full shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center justify-between gap-4 w-full">
             <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
+              <SidebarTrigger className="-ml-1" type="button" />
               <Separator orientation="vertical" className="mr-2 h-4" />
               <Breadcrumb>
                 <BreadcrumbList>

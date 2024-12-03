@@ -3,6 +3,12 @@ export { Label } from "@/components/ui/label";
 
 export { Button } from "@/components/ui/button";
 export {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+export {
   Card,
   CardContent,
   CardDescription,
