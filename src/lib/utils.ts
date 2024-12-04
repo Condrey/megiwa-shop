@@ -37,6 +37,7 @@ export function findVariant(
 ) {
   if (!product.manageVariants) return null;
 
+  product.variants;
   return (
     product.variants?.find((variant) => {
       return Object.entries(selectedOptions).every(

@@ -68,7 +68,7 @@ model Product {
   sku                    String?
   slug                   String?
   stock                  Stock?                  @relation(fields: [stockId], references: [id])
-  variants               Variant[]
+  variants               ProductVariant[]
   visible                Boolean                 @default(false)
   weight                 Int?
   weightRange            NumericPropertyRange?   @relation("weightRangeProductRelation", fields: [weightRangeId], references: [id])
@@ -101,14 +101,15 @@ model AdditionalInfoSection {
 }
 
 model CostAndProfitData {
-  id                String    @unique @default(uuid())
-  formattedItemCost String?
-  formattedProfit   String?
-  itemCost          Int?
-  profit            Int?
-  profitMargin      Int?
-  products          Product[]
-  variants          Variant[]
+  id                      String                   @unique @default(uuid())
+  formattedItemCost       String?
+  formattedProfit         String?
+  itemCost                Int?
+  profit                  Int?
+  profitMargin            Int?
+  products                Product[]
+  variants                Variant[]
+  variantDataWithNoStocks VariantDataWithNoStock[]
 
   @@map("cost_and_profit_data")
 }
@@ -240,17 +241,19 @@ model MainMedia {
 }
 
 model PriceData {
-  id                         String          @unique @default(uuid())
-  currency                   String?
-  discountedPrice            Int?
-  formatted                  FormattedPrice? @relation(fields: [formattedPriceId], references: [id])
-  price                      Int?
-  pricePerUnit               Int?
-  formattedPriceId           String?
-  priceDataProducts          Product[]       @relation("priceDataPriceDataRelation")
-  convertedPriceDataProducts Product[]       @relation("convertedPriceDataPriceDataRelation")
-  priceDataVariants          Variant[]       @relation("priceDataPriceDataRelation")
-  convertedPriceDataVariants Variant[]       @relation("convertedPriceDataPriceDataRelation")
+  id                                       String                   @unique @default(uuid())
+  currency                                 String?
+  discountedPrice                          Int?
+  formatted                                FormattedPrice?          @relation(fields: [formattedPriceId], references: [id])
+  price                                    Int?
+  pricePerUnit                             Int?
+  formattedPriceId                         String?
+  priceDataProducts                        Product[]                @relation("priceDataPriceDataRelation")
+  convertedPriceDataProducts               Product[]                @relation("convertedPriceDataPriceDataRelation")
+  priceDataVariants                        Variant[]                @relation("priceDataPriceDataRelation")
+  convertedPriceDataVariants               Variant[]                @relation("convertedPriceDataPriceDataRelation")
+  priceDataVariantDataWithNoStock          VariantDataWithNoStock[] @relation("priceDataPriceDataRelation")
+  convertedPriceDataVariantDataWithNoStock VariantDataWithNoStock[] @relation("convertedPriceDataPriceDataRelation")
 
   @@map("price_datas")
 }
@@ -408,18 +411,56 @@ enum InventoryStatus {
 }
 
 model Variant {
-  id                   String             @unique @default(uuid())
-  convertedPriceData   PriceData?         @relation("convertedPriceDataPriceDataRelation", fields: [convertedPriceDataId], references: [id])
-  costAndProfitData    CostAndProfitData? @relation(fields: [costAndProfitDataId], references: [id])
-  priceData            PriceData?         @relation("priceDataPriceDataRelation", fields: [priceDataId], references: [id])
-  sku                  String?
-  visible              Boolean            @default(false)
-  weight               Int?
-  Product              Product?           @relation(fields: [productId], references: [id])
-  productId            String?
+  id                 String             @unique @default(uuid())
+  convertedPriceData PriceData?         @relation("convertedPriceDataPriceDataRelation", fields: [convertedPriceDataId], references: [id])
+  costAndProfitData  CostAndProfitData? @relation(fields: [costAndProfitDataId], references: [id])
+  priceData          PriceData?         @relation("priceDataPriceDataRelation", fields: [priceDataId], references: [id])
+  sku                String?
+  visible            Boolean            @default(false)
+  weight             Int?
+
   costAndProfitDataId  String?
   convertedPriceDataId String?
   priceDataId          String?
 
   @@map("variants")
+}
+
+model VariantDataWithNoStock {
+  id                   String             @unique @default(uuid())
+  priceData            PriceData?         @relation("priceDataPriceDataRelation", fields: [priceDataId], references: [id])
+  convertedPriceData   PriceData?         @relation("convertedPriceDataPriceDataRelation", fields: [convertedPriceDataId], references: [id])
+  constAndProfitData   CostAndProfitData? @relation(fields: [costAndProfitDataId], references: [id])
+  weight               Int?
+  sku                  String?
+  visible              Boolean            @default(true)
+  priceDataId          String?
+  convertedPriceDataId String?
+  costAndProfitDataId  String?
+  productVariants      ProductVariant[]
+
+  @@map("variant-data-with-no-stocks")
+}
+
+model VariantStock {
+  id              String           @unique @default(uuid())
+  trackQuantity   Boolean          @default(true)
+  quantity        Int?
+  inStock         Boolean          @default(true)
+  productVariants ProductVariant[]
+
+  @@map("variant-stocks")
+}
+
+model ProductVariant {
+  id                       String                  @unique @default(uuid())
+  choices                  Json?
+  variant                  VariantDataWithNoStock? @relation(fields: [variantDataWithNoStockId], references: [id])
+  stock                    VariantStock?           @relation(fields: [variantStockId], references: [id])
+  Product                  Product?                @relation(fields: [productId], references: [id])
+  productId                String?
+  variantDataWithNoStockId String?
+  variantStockId           String?
+
+  @@map("product-variants")
 }

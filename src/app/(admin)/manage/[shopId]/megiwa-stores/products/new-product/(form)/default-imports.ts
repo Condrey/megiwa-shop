@@ -18,8 +18,19 @@ export {
 } from "@/components/ui/card";
 export { Checkbox } from "@/components/ui/checkbox";
 export {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
+export {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,

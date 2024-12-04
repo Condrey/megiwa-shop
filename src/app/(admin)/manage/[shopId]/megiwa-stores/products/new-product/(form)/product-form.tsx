@@ -25,11 +25,12 @@ import { Form } from "./default-imports";
 import HireAProfessional from "./hire-a-professional";
 import ImagesAndVideos from "./images-and-videos";
 import InventoryAndShipping from "./inventory-and-shipping";
+import ManageVariants from "./manage-variants/manage-variants";
 import MarketingAndSeo from "./marketing-and-seo";
 import { useNewProductMutation } from "./mutation";
 import PreOrder from "./pre-order";
 import Pricing from "./pricing";
-import ProductOptions from "./product-options";
+import ProductOptions from "./product-options/product-options";
 import Subscriptions from "./subscriptions";
 import Visibilities from "./visibilities";
 
@@ -90,6 +91,7 @@ export default function ProductForm() {
     },
   });
   const watchedName = form.watch("name");
+  const watchedVariants = form.watch("variants");
 
   function onSubmit(input: UpsertProductSchema) {
     mutation.mutate(input);
@@ -138,6 +140,9 @@ export default function ProductForm() {
             <Pricing form={form} />
             <CustomText form={form} />
             <ProductOptions form={form} />
+            {!!watchedVariants && !!watchedVariants.length && (
+              <ManageVariants form={form} watchedVariants={watchedVariants} />
+            )}
             <InventoryAndShipping form={form} />
             <PreOrder form={form} />
             <Subscriptions form={form} />

@@ -2,6 +2,7 @@ import {
   DiscountEnumType,
   InventoryStatus,
   MeasurementEnumUnit,
+  OptionType,
   ProductType,
 } from "@prisma/client";
 import cuid from "cuid";
@@ -23,6 +24,7 @@ export const upsertCollectionSchema = z.object({
   description: z.string().optional(),
 });
 export type UpsertCollectionSchema = z.infer<typeof upsertCollectionSchema>;
+
 // Product
 const choiceSchema = z.object({
   id: z.string().trim().optional(),
@@ -38,6 +40,15 @@ const rangeSchema = z
     maxValue: requiredNumber,
   })
   .optional();
+export const productOptionSchema = z.object({
+  id: z.string().trim().optional(),
+  optionType: z.nativeEnum(OptionType),
+  name: requiredString,
+  choices: choicesSchema,
+  inStock: z.boolean().default(true),
+  visible: z.boolean().default(true),
+});
+export type ProductOptionSchema = z.infer<typeof productOptionSchema>;
 const priceDataSchema = z
   .object({
     id: z.string().trim().optional(),
@@ -73,6 +84,42 @@ const stockSchema = z
     trackInventory: z.boolean(),
   })
   .optional();
+const variantSchema = z.object({
+  id: z.string().trim().optional(),
+  priceData: priceDataSchema,
+  Weight: z.string().trim().optional(),
+  sku: z.string().trim().optional(),
+  visible: z.boolean(),
+});
+
+const costAndProfitDataSchema = z
+  .object({
+    id: z.string().trim().optional(),
+    itemCost: requiredNumber,
+    profit: requiredNumber,
+    profitMargin: requiredNumber,
+  })
+  .optional();
+export const productVariantSchema = z.object({
+  id: z.string().trim().optional(),
+  choices: z.record(z.string(), z.string()),
+  stock: z.object({
+    id: z.string().trim().optional(),
+    trackQuantity: z.boolean().default(true),
+    quantity: z.number().optional(),
+    inStock: z.boolean().default(true),
+  }),
+  variant: z.object({
+    id: z.string().trim().optional(),
+    priceData: priceDataSchema,
+    convertedPriceData: priceDataSchema,
+    costAndProfitData: costAndProfitDataSchema,
+    weight: z.number().optional(),
+    sku: z.string().trim().optional(),
+    visible: z.boolean().default(true),
+  }),
+});
+export type ProductVariantSchema = z.infer<typeof productVariantSchema>;
 export const upsertProductSchema = z.object({
   id: z.string().trim().optional(),
   name: requiredString.max(100),
@@ -107,14 +154,7 @@ export const upsertProductSchema = z.object({
       totalQuantity: requiredNumber,
     })
     .optional(),
-  costAndProfitData: z
-    .object({
-      id: z.string().trim().optional(),
-      itemCost: requiredNumber,
-      profit: requiredNumber,
-      profitMargin: requiredNumber,
-    })
-    .optional(),
+  costAndProfitData: costAndProfitDataSchema,
   customTextFields: z.array(
     z.object({
       id: z.string().trim().optional(),
@@ -151,16 +191,7 @@ export const upsertProductSchema = z.object({
   priceRange: rangeSchema,
   costRange: rangeSchema,
   manageVariants: z.boolean().default(false),
-  productOptions: z.array(
-    z.object({
-      id: z.string().trim().optional(),
-      optionType: requiredString,
-      name: requiredString,
-      choices: choicesSchema,
-      inStock: z.boolean().default(true),
-      visible: z.boolean().default(true),
-    })
-  ),
+  productOptions: z.array(productOptionSchema),
   productPageUrl: z
     .object({
       id: z.string().trim().optional(),
@@ -170,20 +201,7 @@ export const upsertProductSchema = z.object({
     .optional(),
   numericId: z.string().trim().optional(),
   collections: z.array(upsertCollectionSchema),
-  variants: z.array(
-    z.object({
-      id: z.string().trim().optional(),
-      choices: choicesSchema,
-      variant: z.object({
-        id: z.string().trim().optional(),
-        priceData: priceDataSchema,
-        Weight: z.string().trim().optional(),
-        sku: z.string().trim().optional(),
-        visible: z.boolean(),
-      }),
-      stock: stockSchema,
-    })
-  ),
+  variants: z.array(productVariantSchema),
   ribbon: z.string().trim().optional(),
 });
 

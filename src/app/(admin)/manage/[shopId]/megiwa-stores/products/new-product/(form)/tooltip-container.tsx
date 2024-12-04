@@ -21,7 +21,7 @@ export default function TooltipContainer({
 }: TooltipContainerProps) {
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip defaultOpen={false}>
         <TooltipTrigger
           type="button"
           className="flex gap-2 justify-start h-fit items-center"
@@ -29,7 +29,11 @@ export default function TooltipContainer({
           <Label className="line-clamp-1 pb-1">{label}</Label>
           <InfoIcon className="size-5 text-primary mb-1" />
         </TooltipTrigger>
-        <TooltipContent className={cn("max-w-xs flex p-4 z-50", className)}>
+        <TooltipContent
+          align="start"
+          sideOffset={4}
+          className={cn("max-w-xs flex p-4 z-50", className)}
+        >
           {children}
         </TooltipContent>
       </Tooltip>
