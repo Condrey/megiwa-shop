@@ -83,7 +83,8 @@ export default function ManagePricingAndInventory({
           <Button
             type="button"
             onClick={() => {
-              deleteVariants();
+              // I think that we do not need to delete the variants at all, why? yet to find out
+              //   deleteVariants();
               form.setValue("manageVariants", false);
               setOpen(false);
             }}

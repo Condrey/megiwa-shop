@@ -134,7 +134,7 @@ export default function ProductForm() {
         </header>
 
         <div className="size-full  grid lg:grid-cols-3 gap-4 py-4 pt-0 *:flex-1">
-          <div className="lg:col-span-2 w-full auto-cols-max   flex flex-col gap-8">
+          <div className=" lg:col-span-2 w-full auto-cols-max   flex flex-col gap-8">
             <ImagesAndVideos form={form} />
             <ProductInfo form={form} />
             <Pricing form={form} />
@@ -143,7 +143,9 @@ export default function ProductForm() {
             {!!watchedVariants && !!watchedVariants.length && (
               <ManageVariants form={form} watchedVariants={watchedVariants} />
             )}
-            <InventoryAndShipping form={form} />
+            {!form.watch("manageVariants") && (
+              <InventoryAndShipping form={form} />
+            )}
             <PreOrder form={form} />
             <Subscriptions form={form} />
           </div>

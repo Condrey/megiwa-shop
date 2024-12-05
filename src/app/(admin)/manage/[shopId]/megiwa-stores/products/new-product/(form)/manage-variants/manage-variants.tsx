@@ -4,6 +4,7 @@ import { formatCurrency } from "@/lib/utils";
 import { ProductVariantSchema, UpsertProductSchema } from "@/lib/validation";
 import { ColumnDef } from "@tanstack/react-table";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import {
   Button,
@@ -12,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../default-imports";
+import DialogEditVariantForm from "./dialog-edit-variant-form";
 
 interface ManageVariantsProps {
   form: UseFormReturn<UpsertProductSchema>;
@@ -22,25 +24,41 @@ export default function ManageVariants({
   form,
   watchedVariants,
 }: ManageVariantsProps) {
+  const [open, setOpen] = useState(true);
   const watchedPriceData = form.watch("priceData");
   const columns = getVariantColumns(watchedPriceData.discountedPrice);
   return (
-    <Card>
-      <CardHeader className="flex-row gap-4">
-        <CardTitle>Manage variants</CardTitle>
-        <Button type="button" variant={"outline"} className="ms-auto">
-          Edit
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          columns={columns}
-          data={watchedVariants}
-          ROWS_PER_TABLE={5}
-          filterColumnId="choices"
-        />
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader className="flex-row items-end gap-4">
+          <CardTitle>Manage variants</CardTitle>
+          <Button
+            type="button"
+            // variant={"outline"}
+            className="ms-auto"
+            onClick={() => setOpen(true)}
+          >
+            Edit
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            columns={columns}
+            data={watchedVariants}
+            ROWS_PER_TABLE={5}
+            className="p-0 
+           "
+          />
+        </CardContent>
+      </Card>
+
+      <DialogEditVariantForm
+        open={open}
+        setOpen={setOpen}
+        originalPrice={watchedPriceData.discountedPrice}
+        productVariants={watchedVariants}
+      />
+    </>
   );
 }
 
@@ -103,7 +121,31 @@ const getVariantColumns = (
       cell: ({ row }) => {
         const productOption = row.original;
 
-        return <span>{productOption.stock.inStock ? "In stock" : "-"}</span>;
+        return (
+          <span>
+            {(productOption.stock.quantity || 0) > 0
+              ? "In stock"
+              : "Out of stock"}
+          </span>
+        );
+      },
+      enableHiding: false,
+    },
+    {
+      accessorKey: "stock.quantity",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Inventory" />
+      ),
+      cell: ({ row }) => {
+        const productOption = row.original;
+
+        return (
+          <span>
+            {productOption.stock.trackQuantity
+              ? productOption.stock.quantity
+              : "-"}
+          </span>
+        );
       },
     },
     {
@@ -116,7 +158,11 @@ const getVariantColumns = (
         const isVisible = productOption.variant.visible;
         return (
           <span title={isVisible ? "Visible" : "Not visible"}>
-            {isVisible ? <EyeIcon /> : <EyeOffIcon />}
+            {isVisible ? (
+              <EyeIcon className="size-4" />
+            ) : (
+              <EyeOffIcon className="size-4" />
+            )}
             <span className="sr-only">
               {isVisible ? "Visible" : "Not visible"}
             </span>

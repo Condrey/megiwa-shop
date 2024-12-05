@@ -15,6 +15,7 @@ interface NumberInputProps<T extends FieldValues>
   className?: string;
   placeholder?: string;
   prefix?: string;
+  suffix?: string;
   disabled?: boolean;
   postChange?: (value: number) => void;
 }
@@ -26,6 +27,7 @@ export function NumberInput<T extends FieldValues>({
   className = "",
   placeholder = "0",
   prefix,
+  suffix,
   disabled = false,
   postChange,
   ...props
@@ -45,7 +47,12 @@ export function NumberInput<T extends FieldValues>({
         min={min}
         max={max}
         step={step}
-        className={cn(`ps-${prefix ? 12 : 4}`, "no-caret", className)}
+        className={cn(
+          `ps-${prefix ? 12 : 4}`,
+          `pe-${suffix ? 12 : 4}`,
+          "no-caret",
+          className
+        )}
         placeholder={placeholder}
         value={field.value ?? ""}
         onChange={(e) => {
@@ -56,6 +63,11 @@ export function NumberInput<T extends FieldValues>({
         name={field.name}
         ref={field.ref}
       />
+      {suffix && (
+        <span className="absolute text-muted-foreground right-2 top-1/2 -translate-y-1/2">
+          {suffix}
+        </span>
+      )}
     </div>
   );
 }

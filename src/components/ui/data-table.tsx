@@ -33,6 +33,7 @@ interface DataTableProps<TData, TValue> {
   ROWS_PER_TABLE?: number;
   selectedItemId?: string | null;
   filterColumnId?: string;
+  className?: string;
   children?: React.ReactNode;
 }
 
@@ -43,6 +44,7 @@ export function DataTable<TData, TValue>({
   selectedItemId,
   handleClick,
   filterColumnId,
+  className,
   children,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -67,7 +69,12 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md bg-card p-4">
+    <div
+      className={cn(
+        "rounded-md bg-card p-4 flex flex-col overflow-y-auto",
+        className
+      )}
+    >
       {/* filtering , column visibility and children */}
       <div className="flex items-center justify-between py-4">
         {!!filterColumnId && (
@@ -85,7 +92,7 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
           />
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex ms-auto items-center gap-2">
           <DataTableViewOptions table={table} />
           {children}
         </div>

@@ -48,7 +48,7 @@ export function useUpsertVariantsArbitrarily(
             id,
             trackQuantity: true,
             quantity: 0,
-            inStock: false,
+            inStock: true,
           },
           variant: {
             id,
