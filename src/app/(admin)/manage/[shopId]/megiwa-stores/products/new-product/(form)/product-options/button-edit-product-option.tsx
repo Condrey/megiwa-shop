@@ -18,6 +18,7 @@ export default function ButtonEditProductOption({
   onProductOptionUpdate,
 }: ButtonEditProductOptionProps) {
   const [open, setOpen] = useState(false);
+  const previousOptions = form.watch("productOptions");
 
   return (
     <>
@@ -37,6 +38,7 @@ export default function ButtonEditProductOption({
         form={form}
         productOptionToEdit={productOption}
         onProductOptionUpdate={onProductOptionUpdate}
+        previousOptions={previousOptions}
       />
     </>
   );

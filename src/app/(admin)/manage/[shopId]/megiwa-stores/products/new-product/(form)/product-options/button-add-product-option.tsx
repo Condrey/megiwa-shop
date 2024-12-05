@@ -14,7 +14,7 @@ export default function ButtonAddProductOption({
   form,
 }: ButtonAddProductOptionProps) {
   const [open, setOpen] = useState(false);
-
+  const previousOptions = form.watch("productOptions");
   return (
     <>
       <Button
@@ -26,7 +26,12 @@ export default function ButtonAddProductOption({
         <PlusIcon className="mr-2 size-4" />
         <span>Add options</span>
       </Button>
-      <AddEditProductOptionsDialog open={open} setOpen={setOpen} form={form} />
+      <AddEditProductOptionsDialog
+        open={open}
+        setOpen={setOpen}
+        form={form}
+        previousOptions={previousOptions}
+      />
     </>
   );
 }

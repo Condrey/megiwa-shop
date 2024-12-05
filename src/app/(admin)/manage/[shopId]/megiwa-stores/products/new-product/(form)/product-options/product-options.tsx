@@ -13,22 +13,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Checkbox,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from "../default-imports";
-import TooltipContainer from "../tooltip-container";
+import { useUpsertVariantsArbitrarily } from "../hooks/variant";
 import ButtonAddProductOption from "./button-add-product-option";
 import ButtonEditProductOption from "./button-edit-product-option";
+import ManagePricingAndInventory from "./manage-pricing-and-inventory";
 
 export interface ProductOptionsProps {
   form: UseFormReturn<UpsertProductSchema>;
 }
 // TODO: implement the pop up dialog
 export default function ProductOptions({ form }: ProductOptionsProps) {
+  const { upsertVariants } = useUpsertVariantsArbitrarily(form);
   const watchedProductOptions = form.watch("productOptions");
   const { update, remove } = useFieldArray({
     control: form.control,
@@ -124,7 +120,15 @@ export default function ProductOptions({ form }: ProductOptionsProps) {
                       title="Remove option"
                       variant={"ghost"}
                       size={"icon"}
-                      onClick={() => remove(iteration)}
+                      onClick={() => {
+                        if (form.watch("manageVariants")) {
+                          const newOptions = watchedProductOptions.filter(
+                            (w) => w.id !== option.id
+                          );
+                          upsertVariants(newOptions);
+                        }
+                        remove(iteration);
+                      }}
                     >
                       <Trash2Icon className="size-4" />
                     </Button>
@@ -138,36 +142,7 @@ export default function ProductOptions({ form }: ProductOptionsProps) {
           </CardContent>
           <hr className="mb-4" />
           <CardFooter>
-            <FormField
-              control={form.control}
-              name="manageVariants"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex gap-2 items-center">
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                      <FormLabel className="flex items-center">
-                        <span>
-                          Manage pricing and inventory for each product variant
-                        </span>
-                        <TooltipContainer label="">
-                          <p>
-                            Variants are combinations of product options, e.g.,{" "}
-                            <strong className="font-semibold">
-                              small black shirt.
-                            </strong>
-                          </p>
-                        </TooltipContainer>
-                      </FormLabel>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <ManagePricingAndInventory form={form} />
           </CardFooter>
         </Card>
       )}

@@ -64,7 +64,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         }
       />
       <div className="basis-3/5 space-y-5">
-      <pre>{JSON.stringify(product,null,2)}</pre>
+        <pre>{JSON.stringify(product.priceData, null, 2)}</pre>
+        <pre className="text-destructive">
+          {JSON.stringify(product.variants, null, 2)}
+        </pre>
         <div className="space-y-2.5">
           <h1 className="text-3xl font-bold lg:text-4xl">{product.name}</h1>
           {product.brand && (

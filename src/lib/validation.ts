@@ -32,7 +32,7 @@ const choiceSchema = z.object({
   description: requiredString,
 });
 export type ChoiceSchema = z.infer<typeof choiceSchema>;
-const choicesSchema = z.array(choiceSchema).optional();
+const choicesSchema = z.array(choiceSchema);
 const rangeSchema = z
   .object({
     id: z.string().trim().optional(),

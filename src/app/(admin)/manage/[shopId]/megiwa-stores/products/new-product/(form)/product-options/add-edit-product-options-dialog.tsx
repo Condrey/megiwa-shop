@@ -45,6 +45,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "../default-imports";
+import { useUpsertVariantsArbitrarily } from "../hooks/variant";
 import TooltipContainer from "../tooltip-container";
 import { ProductOptionsProps } from "./product-options";
 
@@ -55,6 +56,7 @@ const defaultNameList: { label: string; optionType: OptionType }[] = [
 ];
 
 interface AddEditProductOptionsDialogProps extends ProductOptionsProps {
+  previousOptions: ProductOptionSchema[];
   open: boolean;
   setOpen: (open: boolean) => void;
   productOptionToEdit?: ProductOptionSchema;
@@ -62,12 +64,14 @@ interface AddEditProductOptionsDialogProps extends ProductOptionsProps {
 }
 export default function AddEditProductOptionsDialog({
   form,
+  previousOptions,
   open,
   setOpen,
   productOptionToEdit,
   onProductOptionUpdate,
 }: AddEditProductOptionsDialogProps) {
   const [openNamePopover, setOpenNamePopover] = useState(false);
+  const { upsertVariants } = useUpsertVariantsArbitrarily(form);
   const form2 = useForm<ProductOptionSchema>({
     resolver: zodResolver(productOptionSchema),
     defaultValues: {
@@ -88,10 +92,6 @@ export default function AddEditProductOptionsDialog({
     control: form.control,
     name: "productOptions",
   });
-  const variantsUseFieldArray = useFieldArray({
-    control: form.control,
-    name: "variants",
-  });
 
   const productOptionTypes: Record<
     OptionType,
@@ -103,64 +103,24 @@ export default function AddEditProductOptionsDialog({
   };
 
   function handleFormSubmit(input: ProductOptionSchema) {
-    // Adding options
     if (!productOptionToEdit) {
+      // Adding options
       productOptionsUseFieldArray.append({ ...input, id: cuid() });
-
-      if (!!input.choices && !!input.choices.length) {
-        Object.entries(input.choices).forEach(([key, value]) => {
-          variantsUseFieldArray.append({
-            id: value.id,
-            choices: { [input.optionType]: value.value },
-            stock: {
-              id: value.id,
-              trackQuantity: true,
-              quantity: 0,
-              inStock: false,
-            },
-            variant: {
-              id: value.id,
-              priceData: form.watch("priceData"),
-              convertedPriceData: form.watch("priceData"),
-              costAndProfitData: form.watch("costAndProfitData"),
-              weight: 0,
-              sku: "",
-              visible: true,
-            },
-          });
-        });
+      if (form.watch("manageVariants")) {
+        upsertVariants([...previousOptions, { ...input, id: cuid() }]);
       }
-
       form2.reset();
     } else {
       // Updating options
-      if (!!input.choices && !!input.choices.length) {
-        const newVariants = input.choices.map((value) => {
-          return {
-            id: value.id,
-            choices: { [input.optionType]: value.value },
-            stock: {
-              id: value.id,
-              trackQuantity: true,
-              quantity: 0,
-              inStock: false,
-            },
-            variant: {
-              id: value.id,
-              priceData: form.watch("priceData"),
-              convertedPriceData: form.watch("priceData"),
-              costAndProfitData: form.watch("costAndProfitData"),
-              weight: 0,
-              sku: "",
-              visible: true,
-            },
-          };
-        });
-        variantsUseFieldArray.replace(newVariants);
-      }
-
       onProductOptionUpdate && onProductOptionUpdate(input);
+      if (form.watch("manageVariants")) {
+        const updatedOptions = previousOptions.map((option) =>
+          option.id === input.id ? input : option
+        );
+        upsertVariants(updatedOptions);
+      }
     }
+
     setOpen(false);
   }
 
