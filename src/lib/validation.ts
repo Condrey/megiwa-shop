@@ -100,6 +100,14 @@ const costAndProfitDataSchema = z
     profitMargin: requiredNumber,
   })
   .optional();
+export const additionalInfoSectionSchema = z.object({
+  id: z.string().trim().optional(),
+  title: requiredString,
+  description: requiredString,
+});
+export type AdditionalInfoSectionSchema = z.infer<
+  typeof additionalInfoSectionSchema
+>;
 export const productVariantSchema = z.object({
   id: z.string().trim().optional(),
   choices: z.record(z.string(), z.string()),
@@ -169,15 +177,7 @@ export const upsertProductSchema = z.object({
   weight: z.number().optional(),
   visible: z.boolean().default(true),
   brand: z.string().optional(),
-  additionalInfoSections: z
-    .array(
-      z.object({
-        id: z.string().trim().optional(),
-        title: requiredString,
-        description: requiredString,
-      })
-    )
-    .optional(),
+  additionalInfoSections: z.array(additionalInfoSectionSchema).optional(),
   slug: requiredString,
   productType: z.nativeEnum(ProductType),
   weightRange: z

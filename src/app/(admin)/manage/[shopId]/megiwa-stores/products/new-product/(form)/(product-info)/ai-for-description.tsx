@@ -39,6 +39,7 @@ export default function AiForDescription({ form }: AiForDescriptionProps) {
   return (
     <>
       <Button
+        title="Fill in description with Ai generated text"
         type="button"
         className="text-primary"
         variant={"ghost"}

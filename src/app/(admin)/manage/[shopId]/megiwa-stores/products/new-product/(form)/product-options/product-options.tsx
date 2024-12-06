@@ -59,7 +59,10 @@ export default function ProductOptions({ form }: ProductOptionsProps) {
         <Card>
           <CardHeader>
             <CardTitle>
-              Product options {watchedProductOptions.length}
+              Product options{" "}
+              <span className="text-muted-foreground">
+                {watchedProductOptions.length}
+              </span>
             </CardTitle>
             <CardDescription>
               Manage the options this product comes in.

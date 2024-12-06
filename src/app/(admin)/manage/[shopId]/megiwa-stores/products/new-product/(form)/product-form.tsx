@@ -140,9 +140,9 @@ export default function ProductForm() {
             <Pricing form={form} />
             <CustomText form={form} />
             <ProductOptions form={form} />
-            {!!watchedVariants && !!watchedVariants.length && (
-              <ManageVariants form={form} watchedVariants={watchedVariants} />
-            )}
+            {!!watchedVariants &&
+              !!watchedVariants.length &&
+              !!form.watch("manageVariants") && <ManageVariants form={form} />}
             {!form.watch("manageVariants") && (
               <InventoryAndShipping form={form} />
             )}

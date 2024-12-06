@@ -70,14 +70,16 @@ export default function ProductInfo({ form }: ProductInfoProps) {
                 {/* TODO: link to show appearance of ribbon */}
 
                 <TooltipContainer label="Ribbon">
-                  <span>
-                    Add a label like “New Arrival” or “Sale” to make this
-                    product stand out. It’ll be displayed on your product
-                    galleries and widgets.
-                  </span>
-                  <Link href="#" className="hover:underline text-primary">
-                    See how ribbons look
-                  </Link>
+                  <p>
+                    Add a label like{" "}
+                    <strong className="font-semibold">“New Arrival”</strong> or{" "}
+                    <strong className="font-semibold">“Sale”</strong> to make
+                    this product stand out.{" "}
+                    {`It’ll be displayed on your product galleries and widgets.`}{" "}
+                    <Link href="#" className="hover:underline text-primary">
+                      See how ribbons look
+                    </Link>
+                  </p>
                 </TooltipContainer>
 
                 <FormControl>

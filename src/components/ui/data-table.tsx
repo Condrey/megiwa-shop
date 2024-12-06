@@ -69,12 +69,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div
-      className={cn(
-        "rounded-md bg-card p-4 flex flex-col overflow-y-auto",
-        className
-      )}
-    >
+    <div className={cn("rounded-md bg-card p-4 flex flex-col", className)}>
       {/* filtering , column visibility and children */}
       <div className="flex items-center justify-between py-4">
         {!!filterColumnId && (

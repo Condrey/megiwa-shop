@@ -53,6 +53,25 @@ export default function Pricing({ form }: PricingProps) {
     setOnShowPricePerUnitClicked(checked);
   }
 
+  function updateSalePriceDependantArbitrarily(salePrice: number) {
+    const amount = form.watch("priceData.price");
+    const parsedAmount = Number(amount);
+
+    if (isNaN(salePrice) || salePrice <= 0) {
+      form.setValue("priceData.discountedPrice", 0);
+    }
+    if (watchedDiscountType === "PERCENT" && salePrice >= 0) {
+      form.setValue(
+        "discount.value",
+        ((parsedAmount - salePrice) / parsedAmount) * 100
+      );
+    } else if (watchedDiscountType === "AMOUNT" && salePrice >= 0) {
+      form.setValue("discount.value", parsedAmount - salePrice);
+    }
+    updateProfitsCostOfGoodArbitrarily();
+    calculateBasePricePerUnit();
+  }
+
   function updateProfitsCostOfGoodArbitrarily(costOfGood?: number) {
     const watchedCostOfGood = form.watch("costAndProfitData.itemCost");
     const amount = form.watch("priceData.discountedPrice");
@@ -239,12 +258,12 @@ export default function Pricing({ form }: PricingProps) {
                   <FormItem className="basis-1/3">
                     <FormLabel>Sale price</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <NumberInput className=" ps-12" {...field} />
-                        <span className="absolute  left-2 top-1/2 -translate-y-1/2">
-                          {currency}
-                        </span>
-                      </div>
+                      <NumberInput
+                        className=" ps-12"
+                        {...field}
+                        prefix={currency}
+                        postChange={updateSalePriceDependantArbitrarily}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -265,8 +284,12 @@ export default function Pricing({ form }: PricingProps) {
                 Show price per unit
               </Label>
               <TooltipContainer label="">
-                Let customers see prices based on fixed measurement units, e.g.,
-                price per 100 grams of cheese.
+                <p>
+                  Let customers see prices based on fixed measurement units,{" "}
+                  <strong className="font-semibold">
+                    e.g., price per 100 grams of cheese.
+                  </strong>
+                </p>
               </TooltipContainer>
             </div>
           </div>
@@ -278,9 +301,13 @@ export default function Pricing({ form }: PricingProps) {
                     Total product quantity in units
                   </span>
                   <TooltipContainer label="">
-                    Set your product’s total quantity in units, e.g., if your
-                    product weighs 100 grams and the unit is grams, then the
-                    quantity is 100.
+                    <p>
+                      {` Set your product’s total quantity in units, e.g.,`}{" "}
+                      <strong className="font-semibold">
+                        if your product weighs 100 grams and the unit is grams,
+                        then the quantity is 100.
+                      </strong>
+                    </p>
                   </TooltipContainer>
                 </div>
                 <div className=" gap-4 grid grid-cols-2">
@@ -353,9 +380,13 @@ export default function Pricing({ form }: PricingProps) {
                 <div className="flex items-center">
                   <span className="line-clamp-1">Base units</span>
                   <TooltipContainer label="">
-                    Set your product’s unit of measurement to calculate the base
-                    price, e.g., for a product weighing 1 kilo, you may set the
-                    base units to 100 g.
+                    <p>
+                      {`Set your product’s unit of measurement to calculate the base price,`}{" "}
+                      <strong className="font-semibold">
+                        e.g., for a product weighing 1 kilo, you may set the
+                        base units to 100 g.
+                      </strong>
+                    </p>
                   </TooltipContainer>
                 </div>
                 <div className=" gap-4 grid grid-cols-2">
@@ -419,8 +450,10 @@ export default function Pricing({ form }: PricingProps) {
             render={({ field }) => (
               <FormItem className="basis-1/3">
                 <TooltipContainer label="Cost of goods">
-                  The amount you’re spending to produce and sell this product.
-                  Your customers won’t see this.{" "}
+                  <p>
+                    {` The amount you’re spending to produce and sell this product.`}{" "}
+                    <strong className="font-semibold">{`Your customers won’t see this.`}</strong>
+                  </p>
                 </TooltipContainer>
                 <FormControl>
                   <NumberInput
@@ -454,8 +487,9 @@ export default function Pricing({ form }: PricingProps) {
             render={({ field }) => (
               <FormItem className="basis-1/3">
                 <TooltipContainer label="Margin">
-                  The percentage of the price that’s left after deducting your
-                  cost of goods.
+                  <p>
+                    {`The percentage of the price that’s left after deducting your cost of goods.`}
+                  </p>
                 </TooltipContainer>
                 <FormControl>
                   <div className="relative">

@@ -1,6 +1,6 @@
 import { DataTableColumnHeader } from "@/components/ui/data-column-header";
 import { DataTable } from "@/components/ui/data-table";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { ProductVariantSchema, UpsertProductSchema } from "@/lib/validation";
 import { ColumnDef } from "@tanstack/react-table";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -17,21 +17,23 @@ import DialogEditVariantForm from "./dialog-edit-variant-form";
 
 interface ManageVariantsProps {
   form: UseFormReturn<UpsertProductSchema>;
-  watchedVariants: ProductVariantSchema[];
 }
 
-export default function ManageVariants({
-  form,
-  watchedVariants,
-}: ManageVariantsProps) {
-  const [open, setOpen] = useState(true);
+export default function ManageVariants({ form }: ManageVariantsProps) {
+  const [open, setOpen] = useState(false);
   const watchedPriceData = form.watch("priceData");
+  const watchedVariants = form.watch("variants");
   const columns = getVariantColumns(watchedPriceData.discountedPrice);
   return (
     <>
       <Card>
         <CardHeader className="flex-row items-end gap-4">
-          <CardTitle>Manage variants</CardTitle>
+          <CardTitle>
+            Manage variants{" "}
+            <span className="text-muted-foreground">
+              {watchedVariants!.length}
+            </span>
+          </CardTitle>
           <Button
             type="button"
             // variant={"outline"}
@@ -46,8 +48,7 @@ export default function ManageVariants({
             columns={columns}
             data={watchedVariants}
             ROWS_PER_TABLE={5}
-            className="p-0 
-           "
+            className="p-0 "
           />
         </CardContent>
       </Card>
@@ -55,7 +56,9 @@ export default function ManageVariants({
       <DialogEditVariantForm
         open={open}
         setOpen={setOpen}
-        originalPrice={watchedPriceData.discountedPrice}
+        originalPrice={watchedPriceData.price}
+        originalDiscountedPrice={watchedPriceData.discountedPrice}
+        form={form}
         productVariants={watchedVariants}
       />
     </>
@@ -63,7 +66,7 @@ export default function ManageVariants({
 }
 
 const getVariantColumns = (
-  originalPrice: number
+  discountedPrice: number
 ): ColumnDef<ProductVariantSchema>[] => {
   return [
     {
@@ -85,11 +88,20 @@ const getVariantColumns = (
       cell: ({ row }) => {
         // TODO:  get the original price
         const productOption = row.original;
-        const newPrice = productOption.variant.priceData.price;
+        const newPrice = productOption.variant.priceData.discountedPrice;
+        const priceDifference = newPrice - discountedPrice;
         return (
-          <span>
+          <span
+            className={cn(
+              "rounded-md px-2 py-1 tabular-nums",
+              priceDifference > 0 && "text-green-50 bg-green-500",
+              priceDifference < 0 &&
+                "text-destructive-foreground bg-destructive"
+            )}
+          >
+            {priceDifference > 0 && <span>+</span>}
             {formatCurrency(
-              newPrice - originalPrice,
+              priceDifference,
               productOption.variant.priceData.currency
             )}
           </span>

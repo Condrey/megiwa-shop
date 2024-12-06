@@ -7,7 +7,7 @@ function generateCombinations(
 ): Array<Record<string, string>> {
   const choices: Record<string, string[]> = {};
   options.forEach((option) => {
-    choices[option.name] = option.choices.map((choice) => choice.value);
+    choices[option.name] = option.choices.map((choice) => choice.description);
   });
 
   const keys = Object.keys(choices);
@@ -35,8 +35,9 @@ export function useUpsertVariantsArbitrarily(
       const variants = combinations.map((combo) => {
         const choiceIds = options.map(
           (option) =>
-            option.choices.find((choice) => choice.value === combo[option.name])
-              ?.id
+            option.choices.find(
+              (choice) => choice.description === combo[option.name]
+            )?.id
         );
 
         const id = choiceIds.join("-"); // Create a unique ID based on combined choices

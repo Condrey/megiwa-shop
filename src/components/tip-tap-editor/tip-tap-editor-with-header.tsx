@@ -20,7 +20,7 @@ import {
   ItalicIcon,
   LucideSubscript,
   LucideSuperscript,
-  WrapTextIcon,
+  PilcrowIcon,
 } from "lucide-react";
 import "./styles.css";
 
@@ -210,7 +210,7 @@ function TipTapEditorHeader({ editor }: TipTapEditorHeaderProps) {
               : "bg-card text-card-foreground"
           }
         >
-          <WrapTextIcon size={16} className="size-4" />
+          <PilcrowIcon size={16} className="size-4" />
         </ToggleGroupItem>
 
         <ToggleGroupItem

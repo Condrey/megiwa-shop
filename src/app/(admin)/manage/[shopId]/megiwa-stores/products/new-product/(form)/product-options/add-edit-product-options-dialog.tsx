@@ -339,7 +339,7 @@ export default function AddEditProductOptionsDialog({
                                           backgroundColor: field.value,
                                         }}
                                       />
-                                      <span>{field.value}</span>
+                                      <span>{choice.description}</span>
                                     </PopoverTrigger>
                                     <PopoverContent className="flex flex-col items-center gap-3 p-4">
                                       <HexColorPicker

@@ -21,7 +21,7 @@ interface NumberInputProps<T extends FieldValues>
 }
 
 export function NumberInput<T extends FieldValues>({
-  min = 0,
+  min,
   max,
   step = 1,
   className = "",
@@ -54,15 +54,21 @@ export function NumberInput<T extends FieldValues>({
           className
         )}
         placeholder={placeholder}
-        value={field.value ?? ""}
+        value={field.value ?? undefined}
         onChange={(e) => {
-          field.onChange(Number(e.target.value) || 0);
-          !!postChange && postChange(Number(e.target.value) || 0);
+          const value = e.target.value;
+          const parsedValue = value === "" ? "" : Number(value);
+
+          field.onChange(parsedValue);
+          if (postChange) {
+            postChange(value === "" ? 0 : Number(value));
+          }
         }}
         onBlur={field.onBlur}
         name={field.name}
         ref={field.ref}
       />
+
       {suffix && (
         <span className="absolute text-muted-foreground right-2 top-1/2 -translate-y-1/2">
           {suffix}
